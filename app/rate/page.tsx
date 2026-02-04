@@ -201,10 +201,10 @@ export default function RatePage() {
   if (isLoading) {
     return (
       <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-background">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.85),_transparent_58%)]" />
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/15 via-background to-secondary/15" />
-        <div className="absolute -left-36 top-8 h-[440px] w-[440px] rounded-full bg-brand-amber/35 blur-[150px]" />
-        <div className="absolute -right-28 bottom-8 h-[360px] w-[360px] rounded-full bg-brand-cyan/35 blur-[140px]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.7),_transparent_55%)]" />
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background to-secondary/10" />
+        <div className="absolute -left-32 top-10 h-[420px] w-[420px] rounded-full bg-brand-amber/25 blur-[140px]" />
+        <div className="absolute -right-24 bottom-10 h-[340px] w-[340px] rounded-full bg-brand-cyan/25 blur-[130px]" />
         <div className="relative flex flex-col items-center gap-4">
           <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
           <p className="text-muted-foreground">Loading songs...</p>
@@ -216,10 +216,10 @@ export default function RatePage() {
   if (errorMessage) {
     return (
       <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-background">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.85),_transparent_58%)]" />
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/15 via-background to-secondary/15" />
-        <div className="absolute -left-36 top-8 h-[440px] w-[440px] rounded-full bg-brand-amber/35 blur-[150px]" />
-        <div className="absolute -right-28 bottom-8 h-[360px] w-[360px] rounded-full bg-brand-cyan/35 blur-[140px]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.7),_transparent_55%)]" />
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background to-secondary/10" />
+        <div className="absolute -left-32 top-10 h-[420px] w-[420px] rounded-full bg-brand-amber/25 blur-[140px]" />
+        <div className="absolute -right-24 bottom-10 h-[340px] w-[340px] rounded-full bg-brand-cyan/25 blur-[130px]" />
         <div className="relative flex flex-col items-center gap-4 text-center">
           <Music className="h-12 w-12 text-primary" />
           <h2 className="text-xl font-semibold text-foreground">
@@ -243,10 +243,10 @@ export default function RatePage() {
   if (songs.length === 0) {
     return (
       <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-background">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.85),_transparent_58%)]" />
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/15 via-background to-secondary/15" />
-        <div className="absolute -left-36 top-8 h-[440px] w-[440px] rounded-full bg-brand-amber/35 blur-[150px]" />
-        <div className="absolute -right-28 bottom-8 h-[360px] w-[360px] rounded-full bg-brand-cyan/35 blur-[140px]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.7),_transparent_55%)]" />
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background to-secondary/10" />
+        <div className="absolute -left-32 top-10 h-[420px] w-[420px] rounded-full bg-brand-amber/25 blur-[140px]" />
+        <div className="absolute -right-24 bottom-10 h-[340px] w-[340px] rounded-full bg-brand-cyan/25 blur-[130px]" />
         <div className="relative flex flex-col items-center gap-4 text-center">
           <Music className="h-12 w-12 text-primary" />
           <h2 className="text-xl font-semibold text-foreground">
@@ -270,19 +270,19 @@ export default function RatePage() {
     <main className="relative min-h-screen overflow-hidden bg-background">
       {/* Vibrant background */}
       <div className="pointer-events-none absolute inset-0">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.9),_transparent_58%)]" />
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/15 via-background to-secondary/15" />
-        <div className="absolute -left-28 top-2 h-[480px] w-[480px] rounded-full bg-brand-amber/40 blur-[160px]" />
-        <div className="absolute -right-24 top-1/3 h-[380px] w-[380px] rounded-full bg-brand-cyan/40 blur-[150px]" />
-        <div className="absolute bottom-4 left-1/4 h-[340px] w-[340px] rounded-full bg-brand-pink/30 blur-[140px]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.8),_transparent_60%)]" />
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background to-secondary/10" />
+        <div className="absolute -left-24 top-4 h-[460px] w-[460px] rounded-full bg-brand-amber/30 blur-[150px]" />
+        <div className="absolute -right-20 top-1/3 h-[360px] w-[360px] rounded-full bg-brand-cyan/30 blur-[140px]" />
+        <div className="absolute bottom-6 left-1/4 h-[320px] w-[320px] rounded-full bg-brand-pink/20 blur-[130px]" />
       </div>
 
       {/* Progress bar at top */}
       <div className="fixed left-0 right-0 top-0 z-50 px-4 pt-4">
         <div className="mx-auto max-w-md">
-          <div className="h-2 w-full overflow-hidden rounded-full border border-white/50 bg-white/40 shadow-sm backdrop-blur-xl">
+          <div className="h-2 w-full overflow-hidden rounded-full border border-white/40 bg-white/30 shadow-sm backdrop-blur-xl">
             <div
-              className="h-full rounded-full bg-gradient-to-r from-primary via-brand-amber to-accent shadow-[0_0_16px_rgba(255,122,87,0.7)] transition-all duration-500"
+              className="h-full rounded-full bg-gradient-to-r from-primary via-brand-amber to-accent shadow-[0_0_12px_rgba(255,122,87,0.55)] transition-all duration-500"
               style={{ width: `${progress}%` }}
             />
           </div>
@@ -316,7 +316,7 @@ export default function RatePage() {
         {/* Main Glass Card */}
         <div className="relative w-full max-w-sm">
           {/* Card glow */}
-          <div className="absolute -inset-6 rounded-[2.5rem] bg-gradient-to-r from-primary/30 via-brand-amber/25 to-accent/30 blur-3xl" />
+          <div className="absolute -inset-6 rounded-[2.5rem] bg-gradient-to-r from-primary/20 via-brand-amber/20 to-accent/20 blur-3xl" />
 
           {/* Main glass card */}
           <div className="relative rounded-[2.5rem] border border-white/40 bg-white/40 p-8 shadow-[0_25px_80px_-40px_rgba(15,23,42,0.45)] backdrop-blur-2xl">
@@ -328,7 +328,7 @@ export default function RatePage() {
               {/* Album Art Placeholder */}
               <div className="relative mb-6">
                 {/* Glow behind album */}
-                <div className="absolute -inset-6 rounded-3xl bg-gradient-to-br from-primary/40 via-brand-amber/30 to-accent/35 blur-3xl" />
+                <div className="absolute -inset-6 rounded-3xl bg-gradient-to-br from-primary/30 via-brand-amber/25 to-accent/25 blur-3xl" />
 
                 {/* Album container */}
                 <div className="relative h-52 w-52 overflow-hidden rounded-3xl border border-white/50 bg-white/40 backdrop-blur-xl sm:h-60 sm:w-60">
