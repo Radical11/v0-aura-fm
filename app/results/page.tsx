@@ -29,39 +29,39 @@ const AURA_CONFIG: Record<string, {
   barColor: string;
 }> = {
   chill: {
-    icon: <Moon className="h-12 w-12 text-cyan-300 sm:h-14 sm:w-14" />,
-    emoji: "🌙",
+    icon: <Moon className="h-12 w-12 text-blue-300 sm:h-14 sm:w-14" />,
+    emoji: "🌊",
     description: "You vibe with laid-back beats, dreamy melodies, and late-night soundscapes. Your music taste is effortlessly cool and introspective.",
-    gradient: "from-cyan-400 to-blue-500",
-    barColor: "from-cyan-400 to-blue-400",
+    gradient: "from-blue-400 to-cyan-400",
+    barColor: "from-blue-400 to-cyan-400",
   },
   hype: {
     icon: <Zap className="h-12 w-12 text-orange-300 sm:h-14 sm:w-14" />,
     emoji: "🔥",
     description: "You're all about high-energy tracks that get you moving! Upbeat rhythms and powerful drops are your jam.",
-    gradient: "from-orange-400 to-red-500",
-    barColor: "from-orange-400 to-red-400",
+    gradient: "from-orange-400 to-yellow-400",
+    barColor: "from-orange-400 to-yellow-400",
   },
   sad: {
-    icon: <Heart className="h-12 w-12 text-purple-300 sm:h-14 sm:w-14" />,
+    icon: <Heart className="h-12 w-12 text-pink-300 sm:h-14 sm:w-14" />,
     emoji: "💜",
     description: "You connect deeply with music that tells a story. Heartfelt lyrics and soulful melodies speak to your heart.",
-    gradient: "from-purple-400 to-pink-500",
-    barColor: "from-purple-400 to-pink-400",
+    gradient: "from-pink-400 to-rose-400",
+    barColor: "from-pink-400 to-rose-400",
   },
   indie: {
     icon: <Guitar className="h-12 w-12 text-emerald-300 sm:h-14 sm:w-14" />,
     emoji: "🎸",
     description: "You have eclectic taste and appreciate unique sounds. Indie gems and alternative vibes define your musical identity.",
-    gradient: "from-emerald-400 to-teal-500",
+    gradient: "from-emerald-400 to-teal-400",
     barColor: "from-emerald-400 to-teal-400",
   },
   balanced: {
-    icon: <Sparkles className="h-12 w-12 text-violet-300 sm:h-14 sm:w-14" />,
+    icon: <Sparkles className="h-12 w-12 text-amber-300 sm:h-14 sm:w-14" />,
     emoji: "✨",
     description: "Your taste is wonderfully diverse! You appreciate all kinds of music and don't limit yourself to one vibe.",
-    gradient: "from-violet-400 to-purple-500",
-    barColor: "from-violet-400 to-purple-400",
+    gradient: "from-amber-400 to-orange-400",
+    barColor: "from-amber-400 to-orange-400",
   },
 };
 
@@ -80,14 +80,12 @@ export default function ResultsPage() {
         return;
       }
 
-      // Get user profile
       const { data: profile } = await supabase
         .from("profiles")
         .select("username")
         .eq("id", user.id)
         .single();
 
-      // Get all ratings with song vibes
       const { data: ratings } = await supabase
         .from("ratings")
         .select("rating, songs(vibe)")
@@ -98,7 +96,6 @@ export default function ResultsPage() {
         return;
       }
 
-      // Count vibes for liked songs only
       const vibeCounts: Record<string, number> = {
         chill: 0,
         hype: 0,
@@ -118,18 +115,15 @@ export default function ResultsPage() {
         }
       }
 
-      // Convert to array and sort by count
       const vibeBreakdown: VibeCount[] = Object.entries(vibeCounts)
         .map(([vibe, count]) => ({ vibe, count }))
         .sort((a, b) => b.count - a.count);
 
-      // Determine dominant aura
       let dominantAura = "balanced";
       if (totalLiked > 0) {
         const topVibe = vibeBreakdown[0];
         const secondVibe = vibeBreakdown[1];
 
-        // Only set dominant if it's clearly ahead or tied at top
         if (topVibe.count > 0 && topVibe.count >= secondVibe.count) {
           dominantAura = topVibe.vibe;
         }
@@ -143,7 +137,6 @@ export default function ResultsPage() {
         username: profile?.username || null,
       });
 
-      // Update profile with aura type
       await supabase
         .from("profiles")
         .update({ aura_type: dominantAura, total_ratings: ratings.length })
@@ -157,9 +150,12 @@ export default function ResultsPage() {
 
   if (isLoading) {
     return (
-      <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-gradient-to-br from-[#0a0118] via-[#1a0a2e] to-[#0d1033]">
-        <div className="flex flex-col items-center gap-4">
-          <div className="h-8 w-8 animate-spin rounded-full border-2 border-purple-500 border-t-transparent" />
+      <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-[#0c0a14]">
+        <div className="absolute inset-0 bg-gradient-to-br from-[#1a1025] via-[#0f0d18] to-[#0a0d1a]" />
+        <div className="absolute -left-20 top-20 h-[400px] w-[400px] rounded-full bg-orange-500/20 blur-[150px]" />
+        <div className="absolute -right-20 bottom-20 h-[300px] w-[300px] rounded-full bg-blue-500/20 blur-[130px]" />
+        <div className="relative flex flex-col items-center gap-4">
+          <div className="h-8 w-8 animate-spin rounded-full border-2 border-orange-400 border-t-transparent" />
           <p className="text-white/60">Calculating your aura...</p>
         </div>
       </main>
@@ -171,33 +167,24 @@ export default function ResultsPage() {
   const auraConfig = AURA_CONFIG[result.auraType] || AURA_CONFIG.balanced;
 
   return (
-    <main className="relative min-h-screen overflow-hidden bg-gradient-to-br from-[#0a0118] via-[#1a0a2e] to-[#0d1033]">
-      {/* Ambient background orbs */}
-      <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="absolute -left-32 -top-32 h-96 w-96 rounded-full bg-purple-600/20 blur-[128px]" />
-        <div className="absolute -right-32 top-1/4 h-80 w-80 rounded-full bg-blue-600/20 blur-[128px]" />
-        <div className="absolute bottom-0 left-1/3 h-72 w-72 rounded-full bg-violet-500/15 blur-[100px]" />
+    <main className="relative min-h-screen overflow-hidden bg-[#0c0a14]">
+      {/* Vibrant background */}
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute inset-0 bg-gradient-to-br from-[#1a1025] via-[#0f0d18] to-[#0a0d1a]" />
+        <div className="absolute -left-20 top-10 h-[450px] w-[450px] rounded-full bg-orange-500/25 blur-[150px]" />
+        <div className="absolute -right-20 top-1/3 h-[350px] w-[350px] rounded-full bg-blue-500/25 blur-[130px]" />
+        <div className="absolute bottom-10 left-1/4 h-[300px] w-[300px] rounded-full bg-yellow-500/15 blur-[120px]" />
       </div>
-
-      {/* Grid pattern overlay */}
-      <div
-        className="pointer-events-none absolute inset-0 opacity-[0.015]"
-        style={{
-          backgroundImage: `linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px),
-                           linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)`,
-          backgroundSize: "64px 64px",
-        }}
-      />
 
       {/* Content */}
       <div className="relative z-10 flex min-h-screen flex-col items-center justify-center px-4 py-16">
         {/* Logo */}
         <div className="absolute left-4 top-6 sm:left-8">
           <Link href="/" className="flex items-center gap-2 transition-opacity hover:opacity-80">
-            <div className="relative flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-purple-500 to-blue-500">
+            <div className="relative flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-orange-400 via-amber-500 to-yellow-400 shadow-lg shadow-orange-500/20">
               <Sparkles className="h-4 w-4 text-white" />
             </div>
-            <span className="text-base font-semibold tracking-tight text-white/90">aura.fm</span>
+            <span className="text-base font-semibold tracking-tight text-white">aura.fm</span>
           </Link>
         </div>
 
@@ -205,19 +192,22 @@ export default function ResultsPage() {
         <div className="relative w-full max-w-md">
           {/* Animated glow ring */}
           <div
-            className={`absolute -inset-4 rounded-[2rem] bg-gradient-to-r ${auraConfig.gradient} opacity-30 blur-3xl`}
+            className={`absolute -inset-4 rounded-[2.5rem] bg-gradient-to-r ${auraConfig.gradient} opacity-30 blur-3xl`}
             style={{ animation: "glow-pulse 4s ease-in-out infinite" }}
           />
 
           {/* Main glass card */}
-          <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-white/5 p-8 backdrop-blur-xl sm:p-10">
+          <div className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.03] p-8 backdrop-blur-2xl sm:p-10">
+            {/* Inner glow */}
+            <div className="pointer-events-none absolute inset-0 rounded-[2rem] bg-gradient-to-b from-white/5 to-transparent" />
+
             <div className="relative flex flex-col items-center text-center">
               {/* Aura Icon */}
               <div className="relative mb-6">
                 <div className={`absolute -inset-6 rounded-full bg-gradient-to-br ${auraConfig.gradient} opacity-40 blur-2xl`} />
                 <div className="relative flex h-24 w-24 items-center justify-center rounded-full border border-white/10 bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-sm sm:h-28 sm:w-28">
                   {auraConfig.icon}
-                  <div className="absolute -inset-1 animate-[spin_20s_linear_infinite] rounded-full border-2 border-purple-500/30" />
+                  <div className={`absolute -inset-1 animate-[spin_20s_linear_infinite] rounded-full border-2 border-dashed opacity-30 bg-gradient-to-r ${auraConfig.gradient}`} style={{ borderColor: 'currentColor' }} />
                 </div>
               </div>
 
@@ -291,9 +281,9 @@ export default function ResultsPage() {
               <div className="flex w-full flex-col gap-3">
                 <Link
                   href="/leaderboard"
-                  className={`group relative flex w-full items-center justify-center overflow-hidden rounded-full bg-gradient-to-r ${auraConfig.gradient} px-8 py-4 transition-all duration-300 hover:scale-[1.02] hover:shadow-lg`}
+                  className="group relative flex w-full items-center justify-center overflow-hidden rounded-full bg-gradient-to-r from-orange-500 via-amber-500 to-yellow-500 px-8 py-4 transition-all duration-300 hover:scale-[1.02] hover:shadow-lg hover:shadow-orange-500/25"
                 >
-                  <span className="relative flex items-center gap-2 text-sm font-semibold text-white sm:text-base">
+                  <span className="relative flex items-center gap-2 text-sm font-semibold text-black sm:text-base">
                     View Leaderboard
                     <ChevronRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
                   </span>
@@ -324,17 +314,10 @@ export default function ResultsPage() {
 
         {/* Floating decorative elements */}
         <div className="pointer-events-none absolute inset-0">
-          {[...Array(4)].map((_, i) => (
-            <div
-              key={i}
-              className="absolute h-2 w-2 animate-pulse rounded-full bg-purple-400/60"
-              style={{
-                top: `${15 + i * 20}%`,
-                left: `${8 + i * 25}%`,
-                animationDelay: `${i * 0.5}s`,
-              }}
-            />
-          ))}
+          <div className="absolute left-[15%] top-[20%] h-2 w-2 rounded-full bg-orange-400/60" />
+          <div className="absolute right-[20%] top-[15%] h-1.5 w-1.5 rounded-full bg-blue-400/60" />
+          <div className="absolute bottom-[25%] left-[10%] h-1 w-1 rounded-full bg-yellow-400/60" />
+          <div className="absolute bottom-[20%] right-[15%] h-2 w-2 rounded-full bg-cyan-400/60" />
         </div>
       </div>
 

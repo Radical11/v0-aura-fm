@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { Sparkles } from "lucide-react";
 
 export default function SignUpPage() {
   const [email, setEmail] = useState("");
@@ -60,48 +61,47 @@ export default function SignUpPage() {
   };
 
   return (
-    <div className="relative flex min-h-screen w-full items-center justify-center overflow-hidden bg-background p-6">
-      {/* Ambient background effects */}
+    <div className="relative flex min-h-screen w-full items-center justify-center overflow-hidden bg-[#0c0a14] p-6">
+      {/* Vibrant background */}
       <div className="pointer-events-none absolute inset-0">
-        <div className="absolute left-1/4 top-1/4 h-96 w-96 rounded-full bg-primary/20 blur-[120px]" />
-        <div className="absolute bottom-1/4 right-1/4 h-96 w-96 rounded-full bg-secondary/20 blur-[120px]" />
-        <div className="absolute right-1/3 top-1/2 h-64 w-64 rounded-full bg-accent/15 blur-[100px]" />
+        <div className="absolute inset-0 bg-gradient-to-br from-[#1a1025] via-[#0f0d18] to-[#0a0d1a]" />
+        <div className="absolute -left-20 top-10 h-[450px] w-[450px] rounded-full bg-orange-500/25 blur-[150px]" />
+        <div className="absolute -right-20 bottom-10 h-[350px] w-[350px] rounded-full bg-blue-500/25 blur-[130px]" />
+        <div className="absolute right-1/3 top-1/2 h-[300px] w-[300px] rounded-full bg-yellow-500/15 blur-[120px]" />
       </div>
-
-      {/* Grid pattern */}
-      <div
-        className="pointer-events-none absolute inset-0 opacity-[0.02]"
-        style={{
-          backgroundImage: `linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px),
-                           linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)`,
-          backgroundSize: "50px 50px",
-        }}
-      />
 
       {/* Logo */}
       <Link
         href="/"
-        className="absolute left-6 top-6 text-xl font-bold tracking-tight text-foreground"
+        className="absolute left-6 top-6 flex items-center gap-2 transition-opacity hover:opacity-80"
       >
-        aura<span className="text-primary">.fm</span>
+        <div className="relative flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-orange-400 via-amber-500 to-yellow-400 shadow-lg shadow-orange-500/20">
+          <Sparkles className="h-4 w-4 text-white" />
+        </div>
+        <span className="text-lg font-semibold tracking-tight text-white">
+          aura.fm
+        </span>
       </Link>
 
       {/* Glass card */}
       <div className="relative z-10 w-full max-w-md">
-        <div className="absolute -inset-1 rounded-3xl bg-gradient-to-r from-primary/50 via-accent/50 to-secondary/50 opacity-30 blur-xl" />
-        <div className="relative rounded-2xl border border-border bg-card/60 p-8 shadow-2xl backdrop-blur-xl">
-          <div className="mb-8 text-center">
-            <h1 className="mb-2 text-3xl font-bold text-foreground">
+        <div className="absolute -inset-4 rounded-[2rem] bg-gradient-to-r from-orange-500/20 via-yellow-500/20 to-blue-500/20 blur-2xl" />
+        <div className="relative rounded-[1.5rem] border border-white/10 bg-white/[0.03] p-8 shadow-2xl backdrop-blur-2xl">
+          {/* Inner glow */}
+          <div className="pointer-events-none absolute inset-0 rounded-[1.5rem] bg-gradient-to-b from-white/5 to-transparent" />
+
+          <div className="relative mb-8 text-center">
+            <h1 className="mb-2 text-3xl font-bold text-white">
               Join Aura.fm
             </h1>
-            <p className="text-muted-foreground">
+            <p className="text-white/50">
               Create an account to discover your music aura
             </p>
           </div>
 
-          <form onSubmit={handleSignUp} className="space-y-5">
+          <form onSubmit={handleSignUp} className="relative space-y-5">
             <div className="space-y-2">
-              <Label htmlFor="username" className="text-foreground">
+              <Label htmlFor="username" className="text-white/80">
                 Username
               </Label>
               <Input
@@ -111,12 +111,12 @@ export default function SignUpPage() {
                 required
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                className="border-border bg-background/50 text-foreground placeholder:text-muted-foreground focus:border-primary focus:ring-primary"
+                className="border-white/10 bg-white/5 text-white placeholder:text-white/30 focus:border-orange-500/50 focus:ring-orange-500/20"
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="email" className="text-foreground">
+              <Label htmlFor="email" className="text-white/80">
                 Email
               </Label>
               <Input
@@ -126,12 +126,12 @@ export default function SignUpPage() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="border-border bg-background/50 text-foreground placeholder:text-muted-foreground focus:border-primary focus:ring-primary"
+                className="border-white/10 bg-white/5 text-white placeholder:text-white/30 focus:border-orange-500/50 focus:ring-orange-500/20"
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password" className="text-foreground">
+              <Label htmlFor="password" className="text-white/80">
                 Password
               </Label>
               <Input
@@ -141,12 +141,12 @@ export default function SignUpPage() {
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="border-border bg-background/50 text-foreground placeholder:text-muted-foreground focus:border-primary focus:ring-primary"
+                className="border-white/10 bg-white/5 text-white placeholder:text-white/30 focus:border-orange-500/50 focus:ring-orange-500/20"
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="confirmPassword" className="text-foreground">
+              <Label htmlFor="confirmPassword" className="text-white/80">
                 Confirm Password
               </Label>
               <Input
@@ -156,12 +156,12 @@ export default function SignUpPage() {
                 required
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                className="border-border bg-background/50 text-foreground placeholder:text-muted-foreground focus:border-primary focus:ring-primary"
+                className="border-white/10 bg-white/5 text-white placeholder:text-white/30 focus:border-orange-500/50 focus:ring-orange-500/20"
               />
             </div>
 
             {error && (
-              <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-3 text-sm text-destructive">
+              <div className="rounded-lg border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-400">
                 {error}
               </div>
             )}
@@ -169,7 +169,7 @@ export default function SignUpPage() {
             <Button
               type="submit"
               disabled={isLoading}
-              className="relative w-full overflow-hidden bg-gradient-to-r from-primary via-accent to-secondary py-6 text-lg font-semibold text-primary-foreground transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_0_40px_rgba(168,85,247,0.4)]"
+              className="relative w-full overflow-hidden bg-gradient-to-r from-orange-500 via-amber-500 to-yellow-500 py-6 text-lg font-semibold text-black transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_0_40px_rgba(251,146,60,0.4)]"
             >
               {isLoading ? (
                 <span className="flex items-center gap-2">
@@ -200,11 +200,11 @@ export default function SignUpPage() {
             </Button>
           </form>
 
-          <div className="mt-6 text-center text-sm text-muted-foreground">
+          <div className="relative mt-6 text-center text-sm text-white/50">
             Already have an account?{" "}
             <Link
               href="/auth/login"
-              className="font-medium text-primary underline-offset-4 transition-colors hover:text-accent hover:underline"
+              className="font-medium text-orange-400 underline-offset-4 transition-colors hover:text-orange-300 hover:underline"
             >
               Sign in
             </Link>
