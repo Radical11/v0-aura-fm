@@ -29,39 +29,39 @@ const AURA_CONFIG: Record<string, {
   barColor: string;
 }> = {
   chill: {
-    icon: <Moon className="h-12 w-12 text-blue-300 sm:h-14 sm:w-14" />,
+    icon: <Moon className="h-12 w-12 text-secondary sm:h-14 sm:w-14" />,
     emoji: "🌊",
     description: "You vibe with laid-back beats, dreamy melodies, and late-night soundscapes. Your music taste is effortlessly cool and introspective.",
-    gradient: "from-blue-400 to-cyan-400",
-    barColor: "from-blue-400 to-cyan-400",
+    gradient: "from-secondary to-brand-cyan",
+    barColor: "from-secondary to-brand-cyan",
   },
   hype: {
-    icon: <Zap className="h-12 w-12 text-orange-300 sm:h-14 sm:w-14" />,
+    icon: <Zap className="h-12 w-12 text-primary sm:h-14 sm:w-14" />,
     emoji: "🔥",
     description: "You're all about high-energy tracks that get you moving! Upbeat rhythms and powerful drops are your jam.",
-    gradient: "from-orange-400 to-yellow-400",
-    barColor: "from-orange-400 to-yellow-400",
+    gradient: "from-primary to-accent",
+    barColor: "from-primary to-accent",
   },
   sad: {
-    icon: <Heart className="h-12 w-12 text-pink-300 sm:h-14 sm:w-14" />,
+    icon: <Heart className="h-12 w-12 text-brand-pink sm:h-14 sm:w-14" />,
     emoji: "💜",
     description: "You connect deeply with music that tells a story. Heartfelt lyrics and soulful melodies speak to your heart.",
-    gradient: "from-pink-400 to-rose-400",
-    barColor: "from-pink-400 to-rose-400",
+    gradient: "from-brand-pink to-destructive",
+    barColor: "from-brand-pink to-destructive",
   },
   indie: {
-    icon: <Guitar className="h-12 w-12 text-emerald-300 sm:h-14 sm:w-14" />,
+    icon: <Guitar className="h-12 w-12 text-brand-emerald sm:h-14 sm:w-14" />,
     emoji: "🎸",
     description: "You have eclectic taste and appreciate unique sounds. Indie gems and alternative vibes define your musical identity.",
-    gradient: "from-emerald-400 to-teal-400",
-    barColor: "from-emerald-400 to-teal-400",
+    gradient: "from-brand-emerald to-brand-cyan",
+    barColor: "from-brand-emerald to-brand-cyan",
   },
   balanced: {
-    icon: <Sparkles className="h-12 w-12 text-amber-300 sm:h-14 sm:w-14" />,
+    icon: <Sparkles className="h-12 w-12 text-brand-amber sm:h-14 sm:w-14" />,
     emoji: "✨",
     description: "Your taste is wonderfully diverse! You appreciate all kinds of music and don't limit yourself to one vibe.",
-    gradient: "from-amber-400 to-orange-400",
-    barColor: "from-amber-400 to-orange-400",
+    gradient: "from-brand-amber to-primary",
+    barColor: "from-brand-amber to-primary",
   },
 };
 
@@ -150,13 +150,13 @@ export default function ResultsPage() {
 
   if (isLoading) {
     return (
-      <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-[#0c0a14]">
-        <div className="absolute inset-0 bg-gradient-to-br from-[#1a1025] via-[#0f0d18] to-[#0a0d1a]" />
-        <div className="absolute -left-20 top-20 h-[400px] w-[400px] rounded-full bg-orange-500/20 blur-[150px]" />
-        <div className="absolute -right-20 bottom-20 h-[300px] w-[300px] rounded-full bg-blue-500/20 blur-[130px]" />
+      <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-background">
+        <div className="absolute inset-0 bg-gradient-to-br from-muted via-background to-background" />
+        <div className="absolute -left-20 top-20 h-[400px] w-[400px] rounded-full bg-primary/20 blur-[150px]" />
+        <div className="absolute -right-20 bottom-20 h-[300px] w-[300px] rounded-full bg-secondary/20 blur-[130px]" />
         <div className="relative flex flex-col items-center gap-4">
-          <div className="h-8 w-8 animate-spin rounded-full border-2 border-orange-400 border-t-transparent" />
-          <p className="text-white/60">Calculating your aura...</p>
+          <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+          <p className="text-muted-foreground">Calculating your aura...</p>
         </div>
       </main>
     );
@@ -167,13 +167,13 @@ export default function ResultsPage() {
   const auraConfig = AURA_CONFIG[result.auraType] || AURA_CONFIG.balanced;
 
   return (
-    <main className="relative min-h-screen overflow-hidden bg-[#0c0a14]">
+    <main className="relative min-h-screen overflow-hidden bg-background">
       {/* Vibrant background */}
       <div className="pointer-events-none absolute inset-0">
-        <div className="absolute inset-0 bg-gradient-to-br from-[#1a1025] via-[#0f0d18] to-[#0a0d1a]" />
-        <div className="absolute -left-20 top-10 h-[450px] w-[450px] rounded-full bg-orange-500/25 blur-[150px]" />
-        <div className="absolute -right-20 top-1/3 h-[350px] w-[350px] rounded-full bg-blue-500/25 blur-[130px]" />
-        <div className="absolute bottom-10 left-1/4 h-[300px] w-[300px] rounded-full bg-yellow-500/15 blur-[120px]" />
+        <div className="absolute inset-0 bg-gradient-to-br from-muted via-background to-background" />
+        <div className="absolute -left-20 top-10 h-[450px] w-[450px] rounded-full bg-brand-orange/25 blur-[150px]" />
+        <div className="absolute -right-20 top-1/3 h-[350px] w-[350px] rounded-full bg-brand-blue/25 blur-[130px]" />
+        <div className="absolute bottom-10 left-1/4 h-[300px] w-[300px] rounded-full bg-brand-yellow/15 blur-[120px]" />
       </div>
 
       {/* Content */}
@@ -181,10 +181,10 @@ export default function ResultsPage() {
         {/* Logo */}
         <div className="absolute left-4 top-6 sm:left-8">
           <Link href="/" className="flex items-center gap-2 transition-opacity hover:opacity-80">
-            <div className="relative flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-orange-400 via-amber-500 to-yellow-400 shadow-lg shadow-orange-500/20">
-              <Sparkles className="h-4 w-4 text-white" />
+            <div className="relative flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-primary via-brand-amber to-accent shadow-lg shadow-primary/20">
+              <Sparkles className="h-4 w-4 text-primary-foreground" />
             </div>
-            <span className="text-base font-semibold tracking-tight text-white">aura.fm</span>
+            <span className="text-base font-semibold tracking-tight text-foreground">aura.fm</span>
           </Link>
         </div>
 
@@ -197,15 +197,15 @@ export default function ResultsPage() {
           />
 
           {/* Main glass card */}
-          <div className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.03] p-8 backdrop-blur-2xl sm:p-10">
+          <div className="relative overflow-hidden rounded-[2rem] border border-border bg-card p-8 backdrop-blur-2xl sm:p-10">
             {/* Inner glow */}
-            <div className="pointer-events-none absolute inset-0 rounded-[2rem] bg-gradient-to-b from-white/5 to-transparent" />
+            <div className="pointer-events-none absolute inset-0 rounded-[2rem] bg-gradient-to-b from-foreground/5 to-transparent" />
 
             <div className="relative flex flex-col items-center text-center">
               {/* Aura Icon */}
               <div className="relative mb-6">
                 <div className={`absolute -inset-6 rounded-full bg-gradient-to-br ${auraConfig.gradient} opacity-40 blur-2xl`} />
-                <div className="relative flex h-24 w-24 items-center justify-center rounded-full border border-white/10 bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-sm sm:h-28 sm:w-28">
+                <div className="relative flex h-24 w-24 items-center justify-center rounded-full border border-border bg-gradient-to-br from-foreground/10 to-foreground/5 backdrop-blur-sm sm:h-28 sm:w-28">
                   {auraConfig.icon}
                   <div className={`absolute -inset-1 animate-[spin_20s_linear_infinite] rounded-full border-2 border-dashed opacity-30 bg-gradient-to-r ${auraConfig.gradient}`} style={{ borderColor: 'currentColor' }} />
                 </div>
@@ -213,13 +213,13 @@ export default function ResultsPage() {
 
               {/* User greeting */}
               {result.username && (
-                <p className="mb-1 text-sm text-white/40">{result.username}&apos;s Music Aura</p>
+                <p className="mb-1 text-sm text-muted-foreground">{result.username}&apos;s Music Aura</p>
               )}
 
               {/* Main Title */}
               <div className="mb-4">
-                <p className="mb-2 text-sm font-medium uppercase tracking-widest text-white/40">Your Aura</p>
-                <h1 className="text-4xl font-bold tracking-tight text-white sm:text-5xl">
+                <p className="mb-2 text-sm font-medium uppercase tracking-widest text-muted-foreground">Your Aura</p>
+                <h1 className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
                   <span className={`bg-gradient-to-r ${auraConfig.gradient} bg-clip-text text-transparent`}>
                     {result.auraType.charAt(0).toUpperCase() + result.auraType.slice(1)}
                   </span>
@@ -228,13 +228,13 @@ export default function ResultsPage() {
               </div>
 
               {/* Description */}
-              <p className="mb-8 max-w-xs text-sm leading-relaxed text-white/50 sm:text-base">
+              <p className="mb-8 max-w-xs text-sm leading-relaxed text-muted-foreground sm:text-base">
                 {auraConfig.description}
               </p>
 
               {/* Vibe Breakdown */}
               <div className="mb-8 w-full">
-                <h2 className="mb-4 text-xs font-medium uppercase tracking-widest text-white/40">
+                <h2 className="mb-4 text-xs font-medium uppercase tracking-widest text-muted-foreground">
                   Vibe Breakdown
                 </h2>
                 <div className="space-y-3">
@@ -245,15 +245,15 @@ export default function ResultsPage() {
                     return (
                       <div key={item.vibe}>
                         <div className="mb-1 flex items-center justify-between">
-                          <span className="flex items-center gap-2 text-sm font-medium text-white/80">
+                          <span className="flex items-center gap-2 text-sm font-medium text-card-foreground">
                             <span>{vibeConfig.emoji}</span>
                             {item.vibe.charAt(0).toUpperCase() + item.vibe.slice(1)}
                           </span>
-                          <span className="text-sm text-white/50">
+                          <span className="text-sm text-muted-foreground">
                             {item.count} {item.count === 1 ? "song" : "songs"}
                           </span>
                         </div>
-                        <div className="h-2 overflow-hidden rounded-full bg-white/10">
+                        <div className="h-2 overflow-hidden rounded-full bg-foreground/10">
                           <div
                             className={`h-full rounded-full bg-gradient-to-r ${vibeConfig.barColor} transition-all duration-1000 ease-out`}
                             style={{ width: `${percentage}%` }}
@@ -267,13 +267,13 @@ export default function ResultsPage() {
 
               {/* Stats */}
               <div className="mb-8 flex w-full gap-4">
-                <div className="flex flex-1 flex-col items-center rounded-xl border border-white/10 bg-white/5 px-4 py-3 backdrop-blur-sm">
-                  <span className="text-2xl font-bold text-white">{result.totalRated}</span>
-                  <span className="text-xs text-white/50">Songs Rated</span>
+                <div className="flex flex-1 flex-col items-center rounded-xl border border-border bg-foreground/5 px-4 py-3 backdrop-blur-sm">
+                  <span className="text-2xl font-bold text-foreground">{result.totalRated}</span>
+                  <span className="text-xs text-muted-foreground">Songs Rated</span>
                 </div>
-                <div className="flex flex-1 flex-col items-center rounded-xl border border-white/10 bg-white/5 px-4 py-3 backdrop-blur-sm">
-                  <span className="text-2xl font-bold text-white">{result.totalLiked}</span>
-                  <span className="text-xs text-white/50">Songs Liked</span>
+                <div className="flex flex-1 flex-col items-center rounded-xl border border-border bg-foreground/5 px-4 py-3 backdrop-blur-sm">
+                  <span className="text-2xl font-bold text-foreground">{result.totalLiked}</span>
+                  <span className="text-xs text-muted-foreground">Songs Liked</span>
                 </div>
               </div>
 
@@ -281,9 +281,9 @@ export default function ResultsPage() {
               <div className="flex w-full flex-col gap-3">
                 <Link
                   href="/leaderboard"
-                  className="group relative flex w-full items-center justify-center overflow-hidden rounded-full bg-gradient-to-r from-orange-500 via-amber-500 to-yellow-500 px-8 py-4 transition-all duration-300 hover:scale-[1.02] hover:shadow-lg hover:shadow-orange-500/25"
+                  className="group relative flex w-full items-center justify-center overflow-hidden rounded-full bg-gradient-to-r from-primary via-brand-amber to-accent px-8 py-4 transition-all duration-300 hover:scale-[1.02] hover:shadow-lg hover:shadow-primary/25"
                 >
-                  <span className="relative flex items-center gap-2 text-sm font-semibold text-black sm:text-base">
+                  <span className="relative flex items-center gap-2 text-sm font-semibold text-primary-foreground sm:text-base">
                     View Leaderboard
                     <ChevronRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
                   </span>
@@ -291,19 +291,19 @@ export default function ResultsPage() {
 
                 <Link
                   href="/dashboard"
-                  className="group flex w-full items-center justify-center rounded-full border border-white/10 bg-white/5 px-8 py-3.5 backdrop-blur-sm transition-all duration-300 hover:border-white/20 hover:bg-white/10"
+                  className="group flex w-full items-center justify-center rounded-full border border-border bg-foreground/5 px-8 py-3.5 backdrop-blur-sm transition-all duration-300 hover:border-border hover:bg-foreground/10"
                 >
-                  <span className="text-sm font-medium text-white/70 transition-colors group-hover:text-white">
+                  <span className="text-sm font-medium text-muted-foreground transition-colors group-hover:text-foreground">
                     Go to Dashboard
                   </span>
                 </Link>
 
                 <button
                   type="button"
-                  className="group flex w-full items-center justify-center gap-2 rounded-full border border-white/10 bg-white/5 px-8 py-3.5 backdrop-blur-sm transition-all duration-300 hover:border-white/20 hover:bg-white/10"
+                  className="group flex w-full items-center justify-center gap-2 rounded-full border border-border bg-foreground/5 px-8 py-3.5 backdrop-blur-sm transition-all duration-300 hover:border-border hover:bg-foreground/10"
                 >
-                  <Share2 className="h-4 w-4 text-white/70 transition-colors group-hover:text-white" />
-                  <span className="text-sm font-medium text-white/70 transition-colors group-hover:text-white">
+                  <Share2 className="h-4 w-4 text-muted-foreground transition-colors group-hover:text-foreground" />
+                  <span className="text-sm font-medium text-muted-foreground transition-colors group-hover:text-foreground">
                     Share Your Aura
                   </span>
                 </button>
@@ -314,10 +314,10 @@ export default function ResultsPage() {
 
         {/* Floating decorative elements */}
         <div className="pointer-events-none absolute inset-0">
-          <div className="absolute left-[15%] top-[20%] h-2 w-2 rounded-full bg-orange-400/60" />
-          <div className="absolute right-[20%] top-[15%] h-1.5 w-1.5 rounded-full bg-blue-400/60" />
-          <div className="absolute bottom-[25%] left-[10%] h-1 w-1 rounded-full bg-yellow-400/60" />
-          <div className="absolute bottom-[20%] right-[15%] h-2 w-2 rounded-full bg-cyan-400/60" />
+          <div className="absolute left-[15%] top-[20%] h-2 w-2 rounded-full bg-primary/60" />
+          <div className="absolute right-[20%] top-[15%] h-1.5 w-1.5 rounded-full bg-secondary/60" />
+          <div className="absolute bottom-[25%] left-[10%] h-1 w-1 rounded-full bg-accent/60" />
+          <div className="absolute bottom-[20%] right-[15%] h-2 w-2 rounded-full bg-brand-cyan/60" />
         </div>
       </div>
 
