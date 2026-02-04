@@ -1,9 +1,16 @@
 "use client";
 
-import React from "react"
-
-import { useEffect, useState } from "react";
-import { Sparkles, Moon, Music, ChevronRight, Share2, Zap, Heart, Guitar } from "lucide-react";
+import { useEffect, useState, type ReactNode } from "react";
+import {
+  Sparkles,
+  Moon,
+  Music,
+  ChevronRight,
+  Share2,
+  Zap,
+  Heart,
+  Guitar,
+} from "lucide-react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
@@ -21,13 +28,16 @@ interface AuraResult {
   username: string | null;
 }
 
-const AURA_CONFIG: Record<string, { 
-  icon: React.ReactNode; 
-  emoji: string; 
-  description: string; 
-  gradient: string;
-  barColor: string;
-}> = {
+const AURA_CONFIG: Record<
+  string,
+  {
+    icon: ReactNode;
+    emoji: string;
+    description: string;
+    gradient: string;
+    barColor: string;
+  }
+> = {
   chill: {
     icon: <Moon className="h-12 w-12 text-secondary sm:h-14 sm:w-14" />,
     emoji: "🌊",
@@ -68,28 +78,50 @@ const AURA_CONFIG: Record<string, {
 export default function ResultsPage() {
   const [result, setResult] = useState<AuraResult | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const router = useRouter();
 
   useEffect(() => {
     const calculateAura = async () => {
       const supabase = createClient();
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+        error: userError,
+      } = await supabase.auth.getUser();
+
+      if (userError) {
+        setErrorMessage("We couldn’t verify your session. Please try again.");
+        setIsLoading(false);
+        return;
+      }
 
       if (!user) {
         router.push("/auth/login");
         return;
       }
 
-      const { data: profile } = await supabase
+      const { data: profile, error: profileError } = await supabase
         .from("profiles")
         .select("username")
         .eq("id", user.id)
         .single();
 
-      const { data: ratings } = await supabase
+      if (profileError) {
+        setErrorMessage("We couldn’t load your profile. Please retry.");
+        setIsLoading(false);
+        return;
+      }
+
+      const { data: ratings, error: ratingsError } = await supabase
         .from("ratings")
         .select("rating, songs(vibe)")
         .eq("user_id", user.id);
+
+      if (ratingsError) {
+        setErrorMessage("We couldn’t load your ratings. Please retry.");
+        setIsLoading(false);
+        return;
+      }
 
       if (!ratings || ratings.length === 0) {
         router.push("/rate");
@@ -107,7 +139,10 @@ export default function ResultsPage() {
 
       for (const rating of ratings) {
         if (rating.rating === "like" && rating.songs) {
-          const vibe = (rating.songs as { vibe: string }).vibe;
+          const songRecord = Array.isArray(rating.songs)
+            ? rating.songs[0]
+            : rating.songs;
+          const vibe = (songRecord as { vibe?: string } | null)?.vibe;
           if (vibe && vibeCounts[vibe] !== undefined) {
             vibeCounts[vibe]++;
             totalLiked++;
@@ -151,12 +186,40 @@ export default function ResultsPage() {
   if (isLoading) {
     return (
       <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-background">
-        <div className="absolute inset-0 bg-gradient-to-br from-muted via-background to-background" />
-        <div className="absolute -left-20 top-20 h-[400px] w-[400px] rounded-full bg-primary/20 blur-[150px]" />
-        <div className="absolute -right-20 bottom-20 h-[300px] w-[300px] rounded-full bg-secondary/20 blur-[130px]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.7),_transparent_55%)]" />
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background to-secondary/10" />
+        <div className="absolute -left-32 top-10 h-[420px] w-[420px] rounded-full bg-brand-amber/25 blur-[140px]" />
+        <div className="absolute -right-24 bottom-10 h-[340px] w-[340px] rounded-full bg-brand-cyan/25 blur-[130px]" />
         <div className="relative flex flex-col items-center gap-4">
           <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
           <p className="text-muted-foreground">Calculating your aura...</p>
+        </div>
+      </main>
+    );
+  }
+
+  if (errorMessage) {
+    return (
+      <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-background">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.7),_transparent_55%)]" />
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background to-secondary/10" />
+        <div className="absolute -left-32 top-10 h-[420px] w-[420px] rounded-full bg-brand-amber/25 blur-[140px]" />
+        <div className="absolute -right-24 bottom-10 h-[340px] w-[340px] rounded-full bg-brand-cyan/25 blur-[130px]" />
+        <div className="relative flex flex-col items-center gap-4 text-center">
+          <Music className="h-12 w-12 text-primary" />
+          <h2 className="text-xl font-semibold text-foreground">
+            Something went wrong
+          </h2>
+          <p className="max-w-xs text-sm text-muted-foreground">
+            {errorMessage}
+          </p>
+          <button
+            type="button"
+            onClick={() => window.location.reload()}
+            className="mt-4 rounded-full bg-gradient-to-r from-primary via-brand-amber to-accent px-6 py-3 text-sm font-semibold text-primary-foreground shadow-lg shadow-primary/25 transition-all hover:-translate-y-0.5 hover:shadow-primary/40"
+          >
+            Refresh
+          </button>
         </div>
       </main>
     );
@@ -170,10 +233,11 @@ export default function ResultsPage() {
     <main className="relative min-h-screen overflow-hidden bg-background">
       {/* Vibrant background */}
       <div className="pointer-events-none absolute inset-0">
-        <div className="absolute inset-0 bg-gradient-to-br from-muted via-background to-background" />
-        <div className="absolute -left-20 top-10 h-[450px] w-[450px] rounded-full bg-brand-orange/25 blur-[150px]" />
-        <div className="absolute -right-20 top-1/3 h-[350px] w-[350px] rounded-full bg-brand-blue/25 blur-[130px]" />
-        <div className="absolute bottom-10 left-1/4 h-[300px] w-[300px] rounded-full bg-brand-yellow/15 blur-[120px]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.8),_transparent_60%)]" />
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background to-secondary/10" />
+        <div className="absolute -left-24 top-4 h-[460px] w-[460px] rounded-full bg-brand-amber/30 blur-[150px]" />
+        <div className="absolute -right-20 top-1/3 h-[360px] w-[360px] rounded-full bg-brand-cyan/30 blur-[140px]" />
+        <div className="absolute bottom-6 left-1/4 h-[320px] w-[320px] rounded-full bg-brand-pink/20 blur-[130px]" />
       </div>
 
       {/* Content */}
@@ -181,8 +245,9 @@ export default function ResultsPage() {
         {/* Logo */}
         <div className="absolute left-4 top-6 sm:left-8">
           <Link href="/" className="flex items-center gap-2 transition-opacity hover:opacity-80">
-            <div className="relative flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-primary via-brand-amber to-accent shadow-lg shadow-primary/20">
-              <Sparkles className="h-4 w-4 text-primary-foreground" />
+            <div className="relative flex h-9 w-9 items-center justify-center rounded-2xl bg-white/60 shadow-lg shadow-primary/20 backdrop-blur-xl">
+              <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-primary/70 via-brand-amber/70 to-accent/70 opacity-70" />
+              <Sparkles className="relative h-4 w-4 text-primary-foreground" />
             </div>
             <span className="text-base font-semibold tracking-tight text-foreground">aura.fm</span>
           </Link>
@@ -192,22 +257,22 @@ export default function ResultsPage() {
         <div className="relative w-full max-w-md">
           {/* Animated glow ring */}
           <div
-            className={`absolute -inset-4 rounded-[2.5rem] bg-gradient-to-r ${auraConfig.gradient} opacity-30 blur-3xl`}
+            className={`absolute -inset-6 rounded-[2.8rem] bg-gradient-to-r ${auraConfig.gradient} opacity-30 blur-3xl`}
             style={{ animation: "glow-pulse 4s ease-in-out infinite" }}
           />
 
           {/* Main glass card */}
-          <div className="relative overflow-hidden rounded-[2rem] border border-border bg-card p-8 backdrop-blur-2xl sm:p-10">
+          <div className="relative overflow-hidden rounded-[2.5rem] border border-white/40 bg-white/40 p-8 shadow-[0_25px_80px_-40px_rgba(15,23,42,0.45)] backdrop-blur-2xl sm:p-10">
             {/* Inner glow */}
-            <div className="pointer-events-none absolute inset-0 rounded-[2rem] bg-gradient-to-b from-foreground/5 to-transparent" />
+            <div className="pointer-events-none absolute inset-0 rounded-[2.5rem] bg-gradient-to-b from-white/60 via-white/10 to-transparent" />
 
             <div className="relative flex flex-col items-center text-center">
               {/* Aura Icon */}
               <div className="relative mb-6">
-                <div className={`absolute -inset-6 rounded-full bg-gradient-to-br ${auraConfig.gradient} opacity-40 blur-2xl`} />
-                <div className="relative flex h-24 w-24 items-center justify-center rounded-full border border-border bg-gradient-to-br from-foreground/10 to-foreground/5 backdrop-blur-sm sm:h-28 sm:w-28">
+                <div className={`absolute -inset-7 rounded-full bg-gradient-to-br ${auraConfig.gradient} opacity-45 blur-3xl`} />
+                <div className="relative flex h-24 w-24 items-center justify-center rounded-full border border-white/50 bg-white/40 backdrop-blur-xl sm:h-28 sm:w-28">
                   {auraConfig.icon}
-                  <div className={`absolute -inset-1 animate-[spin_20s_linear_infinite] rounded-full border-2 border-dashed opacity-30 bg-gradient-to-r ${auraConfig.gradient}`} style={{ borderColor: 'currentColor' }} />
+                  <div className={`absolute -inset-1 animate-[spin_20s_linear_infinite] rounded-full border-2 border-dashed opacity-30 bg-gradient-to-r ${auraConfig.gradient}`} style={{ borderColor: "currentColor" }} />
                 </div>
               </div>
 
@@ -253,7 +318,7 @@ export default function ResultsPage() {
                             {item.count} {item.count === 1 ? "song" : "songs"}
                           </span>
                         </div>
-                        <div className="h-2 overflow-hidden rounded-full bg-foreground/10">
+                        <div className="h-2 overflow-hidden rounded-full bg-white/40">
                           <div
                             className={`h-full rounded-full bg-gradient-to-r ${vibeConfig.barColor} transition-all duration-1000 ease-out`}
                             style={{ width: `${percentage}%` }}
@@ -267,11 +332,11 @@ export default function ResultsPage() {
 
               {/* Stats */}
               <div className="mb-8 flex w-full gap-4">
-                <div className="flex flex-1 flex-col items-center rounded-xl border border-border bg-foreground/5 px-4 py-3 backdrop-blur-sm">
+                <div className="flex flex-1 flex-col items-center rounded-2xl border border-white/40 bg-white/40 px-4 py-3 backdrop-blur-xl">
                   <span className="text-2xl font-bold text-foreground">{result.totalRated}</span>
                   <span className="text-xs text-muted-foreground">Songs Rated</span>
                 </div>
-                <div className="flex flex-1 flex-col items-center rounded-xl border border-border bg-foreground/5 px-4 py-3 backdrop-blur-sm">
+                <div className="flex flex-1 flex-col items-center rounded-2xl border border-white/40 bg-white/40 px-4 py-3 backdrop-blur-xl">
                   <span className="text-2xl font-bold text-foreground">{result.totalLiked}</span>
                   <span className="text-xs text-muted-foreground">Songs Liked</span>
                 </div>
@@ -281,7 +346,7 @@ export default function ResultsPage() {
               <div className="flex w-full flex-col gap-3">
                 <Link
                   href="/leaderboard"
-                  className="group relative flex w-full items-center justify-center overflow-hidden rounded-full bg-gradient-to-r from-primary via-brand-amber to-accent px-8 py-4 transition-all duration-300 hover:scale-[1.02] hover:shadow-lg hover:shadow-primary/25"
+                  className="group relative flex w-full items-center justify-center overflow-hidden rounded-full bg-gradient-to-r from-primary via-brand-amber to-accent px-8 py-4 shadow-lg shadow-primary/25 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-primary/40"
                 >
                   <span className="relative flex items-center gap-2 text-sm font-semibold text-primary-foreground sm:text-base">
                     View Leaderboard
@@ -291,7 +356,7 @@ export default function ResultsPage() {
 
                 <Link
                   href="/dashboard"
-                  className="group flex w-full items-center justify-center rounded-full border border-border bg-foreground/5 px-8 py-3.5 backdrop-blur-sm transition-all duration-300 hover:border-border hover:bg-foreground/10"
+                  className="group flex w-full items-center justify-center rounded-full border border-white/50 bg-white/40 px-8 py-3.5 backdrop-blur-xl transition-all duration-300 hover:bg-white/60"
                 >
                   <span className="text-sm font-medium text-muted-foreground transition-colors group-hover:text-foreground">
                     Go to Dashboard
@@ -300,7 +365,7 @@ export default function ResultsPage() {
 
                 <button
                   type="button"
-                  className="group flex w-full items-center justify-center gap-2 rounded-full border border-border bg-foreground/5 px-8 py-3.5 backdrop-blur-sm transition-all duration-300 hover:border-border hover:bg-foreground/10"
+                  className="group flex w-full items-center justify-center gap-2 rounded-full border border-white/50 bg-white/40 px-8 py-3.5 backdrop-blur-xl transition-all duration-300 hover:bg-white/60"
                 >
                   <Share2 className="h-4 w-4 text-muted-foreground transition-colors group-hover:text-foreground" />
                   <span className="text-sm font-medium text-muted-foreground transition-colors group-hover:text-foreground">
