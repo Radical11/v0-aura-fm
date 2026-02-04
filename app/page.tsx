@@ -21,14 +21,12 @@ export default function Home() {
     <main className="relative min-h-screen overflow-hidden bg-background">
       {/* Vibrant gradient background */}
       <div className="pointer-events-none absolute inset-0">
-        {/* Main gradient mesh */}
-        <div className="absolute inset-0 bg-gradient-to-br from-muted via-background to-background" />
-        
-        {/* Vibrant orbs using semantic tokens */}
-        <div className="absolute -left-20 top-20 h-[500px] w-[500px] rounded-full bg-brand-orange/25 blur-[150px]" />
-        <div className="absolute -right-20 top-40 h-[400px] w-[400px] rounded-full bg-brand-blue/30 blur-[130px]" />
-        <div className="absolute bottom-20 left-1/4 h-[350px] w-[350px] rounded-full bg-brand-yellow/20 blur-[120px]" />
-        <div className="absolute -bottom-20 right-1/3 h-[300px] w-[300px] rounded-full bg-brand-cyan/20 blur-[100px]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.9),_transparent_58%)]" />
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/15 via-background to-secondary/15" />
+        <div className="absolute -left-32 top-6 h-[540px] w-[540px] rounded-full bg-brand-amber/40 blur-[170px]" />
+        <div className="absolute -right-24 top-28 h-[440px] w-[440px] rounded-full bg-brand-cyan/40 blur-[150px]" />
+        <div className="absolute bottom-6 left-1/4 h-[380px] w-[380px] rounded-full bg-brand-pink/30 blur-[140px]" />
+        <div className="absolute -bottom-24 right-1/3 h-[340px] w-[340px] rounded-full bg-brand-blue/30 blur-[120px]" />
       </div>
 
       {/* Noise texture */}
@@ -42,8 +40,9 @@ export default function Home() {
       {/* Nav */}
       <nav className="absolute left-0 right-0 top-0 z-20 flex items-center justify-between px-6 py-5">
         <div className="flex items-center gap-3">
-          <div className="relative flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-primary via-brand-amber to-accent shadow-lg shadow-primary/25">
-            <Sparkles className="h-5 w-5 text-primary-foreground" />
+          <div className="relative flex h-11 w-11 items-center justify-center rounded-2xl bg-white/60 shadow-lg shadow-primary/20 backdrop-blur-xl">
+            <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-primary/70 via-brand-amber/70 to-accent/70 opacity-70" />
+            <Sparkles className="relative h-5 w-5 text-primary-foreground" />
           </div>
           <span className="text-xl font-semibold tracking-tight text-foreground">
             aura.fm
@@ -53,7 +52,7 @@ export default function Home() {
           {user ? (
             <Link
               href="/dashboard"
-              className="rounded-full bg-foreground/10 px-5 py-2.5 text-sm font-medium text-foreground backdrop-blur-xl transition-all hover:bg-foreground/20"
+              className="rounded-full border border-white/40 bg-white/40 px-5 py-2.5 text-sm font-semibold text-foreground backdrop-blur-xl transition-all hover:bg-white/60"
             >
               Dashboard
             </Link>
@@ -61,13 +60,13 @@ export default function Home() {
             <>
               <Link
                 href="/auth/login"
-                className="px-4 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+                className="rounded-full px-4 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
               >
                 Sign In
               </Link>
               <Link
                 href="/auth/sign-up"
-                className="rounded-full bg-foreground/10 px-5 py-2.5 text-sm font-medium text-foreground backdrop-blur-xl transition-all hover:bg-foreground/20"
+                className="rounded-full bg-gradient-to-r from-primary via-brand-amber to-accent px-5 py-2.5 text-sm font-semibold text-primary-foreground shadow-lg shadow-primary/25 transition-all hover:-translate-y-0.5 hover:shadow-primary/40"
               >
                 Get Started
               </Link>
@@ -105,19 +104,19 @@ export default function Home() {
           }}
         >
           {/* Card glow */}
-          <div className="absolute -inset-4 rounded-[2.5rem] bg-gradient-to-r from-primary/20 via-accent/20 to-secondary/20 blur-2xl" />
+          <div className="absolute -inset-6 rounded-[2.8rem] bg-gradient-to-r from-primary/35 via-brand-amber/30 to-accent/35 blur-3xl" />
 
           {/* Main glass card */}
-          <div className="relative rounded-[2rem] border border-border bg-card p-10 backdrop-blur-2xl sm:p-14">
+          <div className="relative rounded-[2.6rem] border border-white/40 bg-white/40 p-10 shadow-[0_30px_90px_-40px_rgba(15,23,42,0.5)] backdrop-blur-2xl sm:p-14">
             {/* Inner glow */}
-            <div className="pointer-events-none absolute inset-0 rounded-[2rem] bg-gradient-to-b from-foreground/5 to-transparent" />
+            <div className="pointer-events-none absolute inset-0 rounded-[2.6rem] bg-gradient-to-b from-white/70 via-white/10 to-transparent" />
 
             {/* Content */}
             <div className="relative flex flex-col items-center text-center">
               {/* Badge */}
-              <div className="mb-6 inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-primary/10 to-accent/10 px-4 py-1.5 backdrop-blur-sm">
+              <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/60 bg-white/60 px-4 py-1.5 backdrop-blur-xl">
                 <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-primary" />
-                <span className="text-sm font-medium text-primary">Discover your music personality</span>
+                <span className="text-sm font-semibold text-foreground">Discover your music personality</span>
               </div>
 
               <h1 className="mb-5 text-balance text-4xl font-bold tracking-tight text-foreground sm:text-5xl md:text-6xl lg:text-7xl">
@@ -140,12 +139,12 @@ export default function Home() {
                 href={user ? "/rate" : "/auth/sign-up"}
                 onMouseEnter={() => setIsHovered(true)}
                 onMouseLeave={() => setIsHovered(false)}
-                className="group relative overflow-hidden rounded-full px-10 py-4 font-semibold text-primary-foreground transition-all duration-300"
+                className="group relative overflow-hidden rounded-full px-10 py-4 font-semibold text-primary-foreground shadow-lg shadow-primary/25 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-primary/40"
               >
                 {/* Button glow effect */}
                 <div
-                  className={`absolute -inset-1 rounded-full bg-gradient-to-r from-primary via-brand-amber to-accent blur-lg transition-all duration-300 ${
-                    isHovered ? "opacity-100 blur-xl" : "opacity-60"
+                  className={`absolute -inset-1 rounded-full bg-gradient-to-r from-primary via-brand-amber to-accent blur-xl transition-all duration-300 ${
+                    isHovered ? "opacity-100 blur-2xl" : "opacity-70"
                   }`}
                 />
 
