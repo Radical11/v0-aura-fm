@@ -186,10 +186,10 @@ export default function ResultsPage() {
   if (isLoading) {
     return (
       <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-background">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.85),_transparent_58%)]" />
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/15 via-background to-secondary/15" />
-        <div className="absolute -left-36 top-8 h-[440px] w-[440px] rounded-full bg-brand-amber/35 blur-[150px]" />
-        <div className="absolute -right-28 bottom-8 h-[360px] w-[360px] rounded-full bg-brand-cyan/35 blur-[140px]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.7),_transparent_55%)]" />
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background to-secondary/10" />
+        <div className="absolute -left-32 top-10 h-[420px] w-[420px] rounded-full bg-brand-amber/25 blur-[140px]" />
+        <div className="absolute -right-24 bottom-10 h-[340px] w-[340px] rounded-full bg-brand-cyan/25 blur-[130px]" />
         <div className="relative flex flex-col items-center gap-4">
           <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
           <p className="text-muted-foreground">Calculating your aura...</p>
@@ -201,10 +201,10 @@ export default function ResultsPage() {
   if (errorMessage) {
     return (
       <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-background">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.85),_transparent_58%)]" />
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/15 via-background to-secondary/15" />
-        <div className="absolute -left-36 top-8 h-[440px] w-[440px] rounded-full bg-brand-amber/35 blur-[150px]" />
-        <div className="absolute -right-28 bottom-8 h-[360px] w-[360px] rounded-full bg-brand-cyan/35 blur-[140px]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.7),_transparent_55%)]" />
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background to-secondary/10" />
+        <div className="absolute -left-32 top-10 h-[420px] w-[420px] rounded-full bg-brand-amber/25 blur-[140px]" />
+        <div className="absolute -right-24 bottom-10 h-[340px] w-[340px] rounded-full bg-brand-cyan/25 blur-[130px]" />
         <div className="relative flex flex-col items-center gap-4 text-center">
           <Music className="h-12 w-12 text-primary" />
           <h2 className="text-xl font-semibold text-foreground">
@@ -233,11 +233,11 @@ export default function ResultsPage() {
     <main className="relative min-h-screen overflow-hidden bg-background">
       {/* Vibrant background */}
       <div className="pointer-events-none absolute inset-0">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.9),_transparent_58%)]" />
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/15 via-background to-secondary/15" />
-        <div className="absolute -left-28 top-2 h-[480px] w-[480px] rounded-full bg-brand-amber/40 blur-[160px]" />
-        <div className="absolute -right-24 top-1/3 h-[380px] w-[380px] rounded-full bg-brand-cyan/40 blur-[150px]" />
-        <div className="absolute bottom-4 left-1/4 h-[340px] w-[340px] rounded-full bg-brand-pink/30 blur-[140px]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.8),_transparent_60%)]" />
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background to-secondary/10" />
+        <div className="absolute -left-24 top-4 h-[460px] w-[460px] rounded-full bg-brand-amber/30 blur-[150px]" />
+        <div className="absolute -right-20 top-1/3 h-[360px] w-[360px] rounded-full bg-brand-cyan/30 blur-[140px]" />
+        <div className="absolute bottom-6 left-1/4 h-[320px] w-[320px] rounded-full bg-brand-pink/20 blur-[130px]" />
       </div>
 
       {/* Content */}
@@ -257,7 +257,7 @@ export default function ResultsPage() {
         <div className="relative w-full max-w-md">
           {/* Animated glow ring */}
           <div
-            className={`absolute -inset-6 rounded-[2.8rem] bg-gradient-to-r ${auraConfig.gradient} opacity-40 blur-3xl`}
+            className={`absolute -inset-6 rounded-[2.8rem] bg-gradient-to-r ${auraConfig.gradient} opacity-30 blur-3xl`}
             style={{ animation: "glow-pulse 4s ease-in-out infinite" }}
           />
 
@@ -269,7 +269,7 @@ export default function ResultsPage() {
             <div className="relative flex flex-col items-center text-center">
               {/* Aura Icon */}
               <div className="relative mb-6">
-                <div className={`absolute -inset-7 rounded-full bg-gradient-to-br ${auraConfig.gradient} opacity-55 blur-3xl`} />
+                <div className={`absolute -inset-7 rounded-full bg-gradient-to-br ${auraConfig.gradient} opacity-45 blur-3xl`} />
                 <div className="relative flex h-24 w-24 items-center justify-center rounded-full border border-white/50 bg-white/40 backdrop-blur-xl sm:h-28 sm:w-28">
                   {auraConfig.icon}
                   <div className={`absolute -inset-1 animate-[spin_20s_linear_infinite] rounded-full border-2 border-dashed opacity-30 bg-gradient-to-r ${auraConfig.gradient}`} style={{ borderColor: "currentColor" }} />
