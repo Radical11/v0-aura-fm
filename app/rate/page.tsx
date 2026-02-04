@@ -24,50 +24,75 @@ export default function RatePage() {
   const [hoveredButton, setHoveredButton] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const router = useRouter();
 
   const currentSong = songs[currentIndex];
   const progress =
-    songs.length > 0 ? Math.round((currentIndex / songs.length) * 100) : 0;
+    songs.length > 0
+      ? Math.round(((currentIndex + 1) / songs.length) * 100)
+      : 0;
+
+  const fetchSongs = useCallback(async () => {
+    setIsLoading(true);
+    setErrorMessage(null);
+    const supabase = createClient();
+
+    const {
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser();
+    if (userError) {
+      setErrorMessage("Couldn’t verify your session. Please try again.");
+      setIsLoading(false);
+      return;
+    }
+    if (!user) {
+      router.push("/auth/login");
+      return;
+    }
+
+    const { data: ratedSongs, error: ratedSongsError } = await supabase
+      .from("ratings")
+      .select("song_id")
+      .eq("user_id", user.id);
+
+    if (ratedSongsError) {
+      setErrorMessage("Couldn’t load your rating history. Please retry.");
+      setIsLoading(false);
+      return;
+    }
+
+    const ratedSongIds = ratedSongs?.map((r) => r.song_id) || [];
+
+    let query = supabase.from("songs").select("*").limit(20);
+
+    if (ratedSongIds.length > 0) {
+      const quotedIds = ratedSongIds.map((id) => `"${id}"`).join(",");
+      query = query.not("id", "in", `(${quotedIds})`);
+    }
+
+    const { data: songsData, error: songsError } = await query;
+    if (songsError) {
+      setErrorMessage("Couldn’t load songs. Please try again.");
+      setIsLoading(false);
+      return;
+    }
+
+    setSongs(songsData || []);
+    setIsLoading(false);
+  }, [router]);
 
   useEffect(() => {
-    const fetchSongs = async () => {
-      const supabase = createClient();
-
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      if (!user) {
-        router.push("/auth/login");
-        return;
-      }
-
-      const { data: ratedSongs } = await supabase
-        .from("ratings")
-        .select("song_id")
-        .eq("user_id", user.id);
-
-      const ratedSongIds = ratedSongs?.map((r) => r.song_id) || [];
-
-      let query = supabase.from("songs").select("*").limit(20);
-
-      if (ratedSongIds.length > 0) {
-        query = query.not("id", "in", `(${ratedSongIds.join(",")})`);
-      }
-
-      const { data: songsData } = await query;
-      setSongs(songsData || []);
-      setIsLoading(false);
-    };
-
     fetchSongs();
-  }, [router]);
+  }, [fetchSongs]);
 
   const handleRate = useCallback(
     async (rating: "like" | "okay" | "skip") => {
       if (!currentSong || isSubmitting) return;
 
       setIsSubmitting(true);
+      setErrorMessage(null);
 
       const newRating = {
         song_id: currentSong.id,
@@ -81,33 +106,46 @@ export default function RatePage() {
         data: { user },
       } = await supabase.auth.getUser();
 
-      if (user) {
-        await supabase.from("ratings").upsert({
-          user_id: user.id,
-          song_id: currentSong.id,
-          rating,
-        });
+      try {
+        if (user) {
+          const { error: upsertError } = await supabase.from("ratings").upsert({
+            user_id: user.id,
+            song_id: currentSong.id,
+            rating,
+          });
+          if (upsertError) {
+            setErrorMessage("We couldn’t save that rating. Please try again.");
+            return;
+          }
 
-        const updateField =
-          rating === "like"
-            ? "total_likes"
-            : rating === "okay"
-              ? "total_okays"
-              : "total_skips";
-        await supabase.rpc("increment_song_stat", {
-          song_id: currentSong.id,
-          stat_field: updateField,
-        });
+          const updateField =
+            rating === "like"
+              ? "total_likes"
+              : rating === "okay"
+                ? "total_okays"
+                : "total_skips";
+          const { error: statsError } = await supabase.rpc(
+            "increment_song_stat",
+            {
+              song_id: currentSong.id,
+              stat_field: updateField,
+            },
+          );
+          if (statsError) {
+            setErrorMessage("We couldn’t update song stats. Please retry.");
+            return;
+          }
+        }
+
+        if (currentIndex < songs.length - 1) {
+          setCurrentIndex((prev) => prev + 1);
+        } else {
+          await calculateAndSaveAura([...ratings, newRating]);
+          router.push("/results");
+        }
+      } finally {
+        setIsSubmitting(false);
       }
-
-      if (currentIndex < songs.length - 1) {
-        setCurrentIndex((prev) => prev + 1);
-      } else {
-        await calculateAndSaveAura([...ratings, newRating]);
-        router.push("/results");
-      }
-
-      setIsSubmitting(false);
     },
     [currentSong, currentIndex, songs.length, ratings, router, isSubmitting],
   );
@@ -163,9 +201,10 @@ export default function RatePage() {
   if (isLoading) {
     return (
       <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-background">
-        <div className="absolute inset-0 bg-gradient-to-br from-muted via-background to-background" />
-        <div className="absolute -left-20 top-20 h-[400px] w-[400px] rounded-full bg-primary/20 blur-[150px]" />
-        <div className="absolute -right-20 bottom-20 h-[300px] w-[300px] rounded-full bg-secondary/20 blur-[130px]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.7),_transparent_55%)]" />
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background to-secondary/10" />
+        <div className="absolute -left-32 top-10 h-[420px] w-[420px] rounded-full bg-brand-amber/25 blur-[140px]" />
+        <div className="absolute -right-24 bottom-10 h-[340px] w-[340px] rounded-full bg-brand-cyan/25 blur-[130px]" />
         <div className="relative flex flex-col items-center gap-4">
           <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
           <p className="text-muted-foreground">Loading songs...</p>
@@ -174,12 +213,40 @@ export default function RatePage() {
     );
   }
 
+  if (errorMessage) {
+    return (
+      <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-background">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.7),_transparent_55%)]" />
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background to-secondary/10" />
+        <div className="absolute -left-32 top-10 h-[420px] w-[420px] rounded-full bg-brand-amber/25 blur-[140px]" />
+        <div className="absolute -right-24 bottom-10 h-[340px] w-[340px] rounded-full bg-brand-cyan/25 blur-[130px]" />
+        <div className="relative flex flex-col items-center gap-4 text-center">
+          <Music className="h-12 w-12 text-primary" />
+          <h2 className="text-xl font-semibold text-foreground">
+            Something went wrong
+          </h2>
+          <p className="max-w-xs text-sm text-muted-foreground">
+            {errorMessage}
+          </p>
+          <button
+            type="button"
+            onClick={fetchSongs}
+            className="mt-4 rounded-full bg-gradient-to-r from-primary via-brand-amber to-accent px-6 py-3 text-sm font-semibold text-primary-foreground shadow-lg shadow-primary/25 transition-all hover:-translate-y-0.5 hover:shadow-primary/40"
+          >
+            Try again
+          </button>
+        </div>
+      </main>
+    );
+  }
+
   if (songs.length === 0) {
     return (
       <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-background">
-        <div className="absolute inset-0 bg-gradient-to-br from-muted via-background to-background" />
-        <div className="absolute -left-20 top-20 h-[400px] w-[400px] rounded-full bg-primary/20 blur-[150px]" />
-        <div className="absolute -right-20 bottom-20 h-[300px] w-[300px] rounded-full bg-secondary/20 blur-[130px]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.7),_transparent_55%)]" />
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background to-secondary/10" />
+        <div className="absolute -left-32 top-10 h-[420px] w-[420px] rounded-full bg-brand-amber/25 blur-[140px]" />
+        <div className="absolute -right-24 bottom-10 h-[340px] w-[340px] rounded-full bg-brand-cyan/25 blur-[130px]" />
         <div className="relative flex flex-col items-center gap-4 text-center">
           <Music className="h-12 w-12 text-primary" />
           <h2 className="text-xl font-semibold text-foreground">
@@ -190,7 +257,7 @@ export default function RatePage() {
           </p>
           <Link
             href="/results"
-            className="mt-4 rounded-full bg-gradient-to-r from-primary to-accent px-6 py-3 font-medium text-primary-foreground transition-all hover:scale-105"
+            className="mt-4 rounded-full bg-gradient-to-r from-primary via-brand-amber to-accent px-6 py-3 font-semibold text-primary-foreground shadow-lg shadow-primary/25 transition-all hover:-translate-y-0.5 hover:shadow-primary/40"
           >
             View Your Results
           </Link>
@@ -203,18 +270,19 @@ export default function RatePage() {
     <main className="relative min-h-screen overflow-hidden bg-background">
       {/* Vibrant background */}
       <div className="pointer-events-none absolute inset-0">
-        <div className="absolute inset-0 bg-gradient-to-br from-muted via-background to-background" />
-        <div className="absolute -left-20 top-10 h-[450px] w-[450px] rounded-full bg-brand-orange/25 blur-[150px]" />
-        <div className="absolute -right-20 top-1/3 h-[350px] w-[350px] rounded-full bg-brand-blue/25 blur-[130px]" />
-        <div className="absolute bottom-10 left-1/4 h-[300px] w-[300px] rounded-full bg-brand-yellow/15 blur-[120px]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.8),_transparent_60%)]" />
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background to-secondary/10" />
+        <div className="absolute -left-24 top-4 h-[460px] w-[460px] rounded-full bg-brand-amber/30 blur-[150px]" />
+        <div className="absolute -right-20 top-1/3 h-[360px] w-[360px] rounded-full bg-brand-cyan/30 blur-[140px]" />
+        <div className="absolute bottom-6 left-1/4 h-[320px] w-[320px] rounded-full bg-brand-pink/20 blur-[130px]" />
       </div>
 
       {/* Progress bar at top */}
       <div className="fixed left-0 right-0 top-0 z-50 px-4 pt-4">
         <div className="mx-auto max-w-md">
-          <div className="h-1.5 w-full overflow-hidden rounded-full bg-foreground/10 backdrop-blur-sm">
+          <div className="h-2 w-full overflow-hidden rounded-full border border-white/40 bg-white/30 shadow-sm backdrop-blur-xl">
             <div
-              className="h-full rounded-full bg-gradient-to-r from-primary via-brand-amber to-accent transition-all duration-500"
+              className="h-full rounded-full bg-gradient-to-r from-primary via-brand-amber to-accent shadow-[0_0_12px_rgba(255,122,87,0.55)] transition-all duration-500"
               style={{ width: `${progress}%` }}
             />
           </div>
@@ -235,8 +303,9 @@ export default function RatePage() {
           className="absolute left-4 top-16 transition-opacity hover:opacity-80 sm:left-8"
         >
           <div className="flex items-center gap-2">
-            <div className="relative flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-primary via-brand-amber to-accent shadow-lg shadow-primary/20">
-              <Sparkles className="h-4 w-4 text-primary-foreground" />
+            <div className="relative flex h-9 w-9 items-center justify-center rounded-2xl bg-white/60 shadow-lg shadow-primary/20 backdrop-blur-xl">
+              <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-primary/70 via-brand-amber/70 to-accent/70 opacity-70" />
+              <Sparkles className="relative h-4 w-4 text-primary-foreground" />
             </div>
             <span className="text-base font-semibold tracking-tight text-foreground">
               aura.fm
@@ -247,22 +316,22 @@ export default function RatePage() {
         {/* Main Glass Card */}
         <div className="relative w-full max-w-sm">
           {/* Card glow */}
-          <div className="absolute -inset-4 rounded-[2rem] bg-gradient-to-r from-primary/15 via-accent/15 to-secondary/15 blur-2xl" />
+          <div className="absolute -inset-6 rounded-[2.5rem] bg-gradient-to-r from-primary/20 via-brand-amber/20 to-accent/20 blur-3xl" />
 
           {/* Main glass card */}
-          <div className="relative rounded-[2rem] border border-border bg-card p-8 backdrop-blur-2xl">
+          <div className="relative rounded-[2.5rem] border border-white/40 bg-white/40 p-8 shadow-[0_25px_80px_-40px_rgba(15,23,42,0.45)] backdrop-blur-2xl">
             {/* Inner glow */}
-            <div className="pointer-events-none absolute inset-0 rounded-[2rem] bg-gradient-to-b from-foreground/5 to-transparent" />
+            <div className="pointer-events-none absolute inset-0 rounded-[2.5rem] bg-gradient-to-b from-white/60 via-white/10 to-transparent" />
 
             {/* Content */}
             <div className="relative flex flex-col items-center">
               {/* Album Art Placeholder */}
               <div className="relative mb-6">
                 {/* Glow behind album */}
-                <div className="absolute -inset-4 rounded-2xl bg-gradient-to-br from-primary/20 via-accent/20 to-secondary/20 blur-2xl" />
+                <div className="absolute -inset-6 rounded-3xl bg-gradient-to-br from-primary/30 via-brand-amber/25 to-accent/25 blur-3xl" />
 
                 {/* Album container */}
-                <div className="relative h-52 w-52 overflow-hidden rounded-2xl border border-border bg-gradient-to-br from-foreground/10 to-foreground/5 backdrop-blur-sm sm:h-60 sm:w-60">
+                <div className="relative h-52 w-52 overflow-hidden rounded-3xl border border-white/50 bg-white/40 backdrop-blur-xl sm:h-60 sm:w-60">
                   {currentSong?.album_art_url ? (
                     <img
                       src={currentSong.album_art_url || "/placeholder.svg"}
@@ -270,24 +339,24 @@ export default function RatePage() {
                       className="h-full w-full object-cover"
                     />
                   ) : (
-                    <div className="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-primary/10 via-transparent to-secondary/10">
-                      <div className="mb-3 rounded-full border border-border bg-foreground/5 p-4">
+                    <div className="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-primary/15 via-white/10 to-secondary/15">
+                      <div className="mb-3 rounded-full border border-white/40 bg-white/40 p-4 backdrop-blur-xl">
                         <Music className="h-8 w-8 text-muted-foreground" />
                       </div>
                       <div className="flex flex-col items-center gap-1">
-                        <div className="h-2 w-20 rounded-full bg-foreground/10" />
-                        <div className="h-2 w-14 rounded-full bg-foreground/10" />
+                        <div className="h-2 w-20 rounded-full bg-white/40" />
+                        <div className="h-2 w-14 rounded-full bg-white/40" />
                       </div>
                     </div>
                   )}
 
                   {/* Subtle reflection */}
-                  <div className="absolute inset-x-0 top-0 h-1/2 bg-gradient-to-b from-foreground/5 to-transparent" />
+                  <div className="absolute inset-x-0 top-0 h-1/2 bg-gradient-to-b from-white/60 to-transparent" />
                 </div>
 
                 {/* Animated ring */}
                 <div
-                  className="absolute -inset-1 rounded-2xl border border-primary/20"
+                  className="absolute -inset-1 rounded-3xl border border-primary/20"
                   style={{
                     animation: "pulse-border 3s ease-in-out infinite",
                   }}
@@ -303,7 +372,7 @@ export default function RatePage() {
                   {currentSong?.artist}
                 </p>
                 {currentSong?.genre && (
-                  <span className="mt-3 rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
+                  <span className="mt-3 rounded-full border border-white/50 bg-white/40 px-3 py-1 text-xs font-semibold text-foreground backdrop-blur-xl">
                     {currentSong.genre}
                   </span>
                 )}
@@ -323,8 +392,8 @@ export default function RatePage() {
                   <div
                     className={`absolute inset-0 rounded-full border transition-all duration-300 ${
                       hoveredButton === "skip"
-                        ? "border-destructive/50 bg-destructive/20"
-                        : "border-border bg-foreground/5"
+                        ? "border-destructive/40 bg-destructive/20"
+                        : "border-white/50 bg-white/40"
                     }`}
                   />
                   <div
@@ -353,8 +422,8 @@ export default function RatePage() {
                   <div
                     className={`absolute inset-0 rounded-full border transition-all duration-300 ${
                       hoveredButton === "okay"
-                        ? "border-secondary/50 bg-secondary/20"
-                        : "border-border bg-foreground/5"
+                        ? "border-secondary/40 bg-secondary/20"
+                        : "border-white/50 bg-white/40"
                     }`}
                   />
                   <div
@@ -384,7 +453,7 @@ export default function RatePage() {
                     className={`absolute inset-0 rounded-full border transition-all duration-300 ${
                       hoveredButton === "like"
                         ? "border-primary/50 bg-gradient-to-br from-primary/30 to-accent/30"
-                        : "border-border bg-foreground/5"
+                        : "border-white/50 bg-white/40"
                     }`}
                   />
                   <div
