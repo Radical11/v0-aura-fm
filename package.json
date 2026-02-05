@@ -7,7 +7,8 @@
     "dev": "next dev",
     "lint": "eslint .",
     "start": "next start",
-    "seed:songs": "node scripts/seed-songs.cjs"
+    "seed:songs": "node scripts/seed-songs.cjs",
+    "import:spotify": "node scripts/import-spotify-playlist.cjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
