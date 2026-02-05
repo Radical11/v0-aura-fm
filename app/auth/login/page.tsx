@@ -122,7 +122,7 @@ function LoginForm() {
             <Button
               type="submit"
               disabled={isLoading}
-              className="relative w-full overflow-hidden bg-gradient-to-r from-primary via-brand-amber to-accent py-6 text-lg font-semibold text-primary-foreground shadow-lg shadow-primary/25 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-primary/40"
+              className="group relative w-full overflow-hidden bg-gradient-to-r from-primary via-brand-amber to-accent py-6 text-lg font-semibold text-primary-foreground shadow-lg shadow-primary/25 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-primary/40"
             >
               {isLoading ? (
                 <span className="flex items-center gap-2">
@@ -148,7 +148,10 @@ function LoginForm() {
                   Signing in...
                 </span>
               ) : (
-                "Sign In"
+                <span className="relative flex items-center justify-center gap-2">
+                  <span className="h-1.5 w-1.5 rounded-full bg-primary-foreground [animation:pulse-dot_1.2s_ease-in-out_infinite]" />
+                  <span>Sign In</span>
+                </span>
               )}
             </Button>
           </form>
@@ -164,6 +167,19 @@ function LoginForm() {
           </div>
         </div>
       </div>
+
+      <style jsx>{`
+        @keyframes pulse-dot {
+          0%, 100% {
+            transform: scale(1);
+            opacity: 0.6;
+          }
+          50% {
+            transform: scale(1.4);
+            opacity: 1;
+          }
+        }
+      `}</style>
     </div>
   );
 }

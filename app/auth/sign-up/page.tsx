@@ -169,7 +169,7 @@ export default function SignUpPage() {
             <Button
               type="submit"
               disabled={isLoading}
-              className="relative w-full overflow-hidden bg-gradient-to-r from-primary via-brand-amber to-accent py-6 text-lg font-semibold text-primary-foreground transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_0_40px_rgba(251,146,60,0.4)]"
+              className="group relative w-full overflow-hidden bg-gradient-to-r from-primary via-brand-amber to-accent py-6 text-lg font-semibold text-primary-foreground transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_0_40px_rgba(251,146,60,0.4)]"
             >
               {isLoading ? (
                 <span className="flex items-center gap-2">
@@ -195,7 +195,10 @@ export default function SignUpPage() {
                   Creating account...
                 </span>
               ) : (
-                "Create Account"
+                <span className="relative flex items-center justify-center gap-2">
+                  <span className="h-1.5 w-1.5 rounded-full bg-primary-foreground [animation:pulse-dot_1.2s_ease-in-out_infinite]" />
+                  <span>Create Account</span>
+                </span>
               )}
             </Button>
           </form>
@@ -211,6 +214,19 @@ export default function SignUpPage() {
           </div>
         </div>
       </div>
+
+      <style jsx>{`
+        @keyframes pulse-dot {
+          0%, 100% {
+            transform: scale(1);
+            opacity: 0.6;
+          }
+          50% {
+            transform: scale(1.4);
+            opacity: 1;
+          }
+        }
+      `}</style>
     </div>
   );
 }

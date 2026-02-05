@@ -9,11 +9,13 @@ import type { User } from "@supabase/supabase-js";
 export default function Home() {
   const [isHovered, setIsHovered] = useState(false);
   const [user, setUser] = useState<User | null>(null);
+  const [cardMounted, setCardMounted] = useState(false);
 
   useEffect(() => {
     const supabase = createClient();
     supabase.auth.getUser().then(({ data: { user } }) => {
       setUser(user);
+      setCardMounted(true);
     });
   }, []);
 
@@ -98,13 +100,16 @@ export default function Home() {
 
         {/* Glass Card */}
         <div
-          className="relative max-w-2xl"
+          className={`relative max-w-2xl transition-transform duration-700 ease-out ${
+            cardMounted ? "translate-y-0 opacity-100" : "translate-y-6 opacity-0"
+          }`}
           style={{
             animation: "float 6s ease-in-out infinite",
           }}
         >
           {/* Card glow */}
           <div className="absolute -inset-6 rounded-[2.8rem] bg-gradient-to-r from-primary/35 via-brand-amber/30 to-accent/35 blur-3xl" />
+          <div className="pointer-events-none absolute -inset-[2px] rounded-[2.7rem] bg-gradient-to-r from-primary/60 via-brand-amber/60 to-accent/60 opacity-60 [mask-image:linear-gradient(white,transparent)] [animation:card-glow_5s_ease-in-out_infinite]" />
 
           {/* Main glass card */}
           <div className="relative rounded-[2.6rem] border border-white/40 bg-white/40 p-10 shadow-[0_30px_90px_-40px_rgba(15,23,42,0.5)] backdrop-blur-2xl sm:p-14">
@@ -130,9 +135,22 @@ export default function Home() {
                 </span>
               </h1>
 
-              <p className="mb-10 max-w-md text-pretty text-lg text-muted-foreground">
+              <p className="mb-4 max-w-md text-pretty text-lg text-muted-foreground">
                 Rate songs and reveal your vibe. Discover what makes your music taste unique.
               </p>
+
+              {/* Feature pills */}
+              <div className="mb-8 flex flex-wrap justify-center gap-2 text-xs text-muted-foreground">
+                <span className="rounded-full border border-white/60 bg-white/60 px-3 py-1 backdrop-blur-xl">
+                  AI-curated song journey
+                </span>
+                <span className="rounded-full border border-white/60 bg-white/60 px-3 py-1 backdrop-blur-xl">
+                  Shareable music aura
+                </span>
+                <span className="rounded-full border border-white/60 bg-white/60 px-3 py-1 backdrop-blur-xl">
+                  Live community leaderboard
+                </span>
+              </div>
 
               {/* CTA Button */}
               <Link
@@ -167,18 +185,6 @@ export default function Home() {
                 </span>
               </Link>
 
-              {/* Social proof */}
-              <div className="mt-8 flex items-center gap-2 text-sm text-muted-foreground">
-                <div className="flex -space-x-2">
-                  {[...Array(4)].map((_, i) => (
-                    <div
-                      key={i}
-                      className="h-7 w-7 rounded-full border-2 border-background bg-gradient-to-br from-primary/50 to-secondary/50"
-                    />
-                  ))}
-                </div>
-                <span className="ml-1">Join 10k+ music lovers</span>
-              </div>
             </div>
           </div>
         </div>
@@ -189,6 +195,16 @@ export default function Home() {
           <div className="absolute right-[25%] top-[25%] h-1.5 w-1.5 rounded-full bg-secondary/60" />
           <div className="absolute bottom-[20%] left-[30%] h-1 w-1 rounded-full bg-accent/60" />
           <div className="absolute bottom-[30%] right-[20%] h-2 w-2 rounded-full bg-brand-cyan/60" />
+        </div>
+
+        {/* Scroll hint */}
+        <div className="pointer-events-none absolute inset-x-0 bottom-8 flex justify-center">
+          <div className="flex items-center gap-2 text-xs text-muted-foreground">
+            <div className="h-8 w-5 rounded-full border border-white/50 bg-white/10 backdrop-blur-xl">
+              <div className="mx-auto mt-1 h-2 w-1 rounded-full bg-white/70 [animation:scroll-dot_1.2s_ease-in-out_infinite]" />
+            </div>
+            <span>Scroll to explore</span>
+          </div>
         </div>
       </div>
 
@@ -201,6 +217,31 @@ export default function Home() {
           }
           50% {
             transform: translateY(-15px);
+          }
+        }
+
+        @keyframes card-glow {
+          0%, 100% {
+            opacity: 0.5;
+            transform: translateY(0px);
+          }
+          50% {
+            opacity: 1;
+            transform: translateY(-4px);
+          }
+        }
+
+        @keyframes scroll-dot {
+          0% {
+            opacity: 0;
+            transform: translateY(0);
+          }
+          40% {
+            opacity: 1;
+          }
+          100% {
+            opacity: 0;
+            transform: translateY(12px);
           }
         }
       `}</style>
