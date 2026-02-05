@@ -42,6 +42,14 @@ export default function LeaderboardPage() {
       <div className="absolute bottom-1/4 right-1/4 h-80 w-80 rounded-full bg-secondary/20 blur-3xl" />
       <div className="absolute left-1/2 top-1/2 h-64 w-64 -translate-x-1/2 -translate-y-1/2 rounded-full bg-accent/10 blur-3xl" />
 
+      {/* Noise texture */}
+      <div
+        className="pointer-events-none absolute inset-0 opacity-[0.03]"
+        style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
+        }}
+      />
+
       {/* Content */}
       <div className="relative z-10 flex min-h-screen flex-col px-6 py-8">
         {/* Header */}
@@ -102,7 +110,8 @@ export default function LeaderboardPage() {
                   {topSongs.map((song, index) => (
                     <div
                       key={song.id}
-                      className="group relative overflow-hidden rounded-2xl border border-transparent bg-foreground/5 p-4 transition-all duration-300 hover:border-primary/30 hover:bg-foreground/10"
+                      className="group relative overflow-hidden rounded-2xl border border-transparent bg-foreground/5 p-4 opacity-0 [animation:leaderboard-fade-in_0.55s_ease-out_forwards] hover:border-primary/30 hover:bg-foreground/10"
+                      style={{ animationDelay: `${index * 80}ms` }}
                     >
                       {/* Hover glow effect */}
                       <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-primary/0 via-accent/0 to-secondary/0 opacity-0 transition-opacity duration-300 group-hover:from-primary/10 group-hover:via-accent/10 group-hover:to-secondary/10 group-hover:opacity-100" />
@@ -180,6 +189,19 @@ export default function LeaderboardPage() {
           Updated in real-time
         </footer>
       </div>
+
+      <style jsx>{`
+        @keyframes leaderboard-fade-in {
+          0% {
+            opacity: 0;
+            transform: translateY(8px) scale(0.98);
+          }
+          100% {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+          }
+        }
+      `}</style>
     </main>
   );
 }

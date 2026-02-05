@@ -24,6 +24,7 @@ export default function RatePage() {
   const [hoveredButton, setHoveredButton] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showSavedToast, setShowSavedToast] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const router = useRouter();
 
@@ -132,10 +133,13 @@ export default function RatePage() {
             },
           );
           if (statsError) {
-            setErrorMessage("We couldn’t update song stats. Please retry.");
+            setErrorMessage("We couldn't update song stats. Please retry.");
             return;
           }
         }
+
+        setShowSavedToast(true);
+        setTimeout(() => setShowSavedToast(false), 1200);
 
         if (currentIndex < songs.length - 1) {
           setCurrentIndex((prev) => prev + 1);
@@ -171,10 +175,10 @@ export default function RatePage() {
     }
 
     const vibeToAura: Record<string, string> = {
-      hype: "Hype",
-      chill: "Chill",
-      sad: "Sad",
-      indie: "Indie",
+      hype: "hype",
+      chill: "chill",
+      sad: "sad",
+      indie: "indie",
     };
 
     let dominantVibe = "chill";
@@ -326,12 +330,12 @@ export default function RatePage() {
             {/* Content */}
             <div className="relative flex flex-col items-center">
               {/* Album Art Placeholder */}
-              <div className="relative mb-6">
+              <div className="group relative mb-6">
                 {/* Glow behind album */}
                 <div className="absolute -inset-6 rounded-3xl bg-gradient-to-br from-primary/30 via-brand-amber/25 to-accent/25 blur-3xl" />
 
                 {/* Album container */}
-                <div className="relative h-52 w-52 overflow-hidden rounded-3xl border border-white/50 bg-white/40 backdrop-blur-xl sm:h-60 sm:w-60">
+                <div className="relative h-52 w-52 overflow-hidden rounded-3xl border border-white/50 bg-white/40 backdrop-blur-xl transition-transform duration-500 group-hover:-translate-y-1 group-hover:scale-[1.02] group-hover:rotate-1 sm:h-60 sm:w-60">
                   {currentSong?.album_art_url ? (
                     <img
                       src={currentSong.album_art_url || "/placeholder.svg"}
@@ -387,7 +391,7 @@ export default function RatePage() {
                   disabled={isSubmitting}
                   onMouseEnter={() => setHoveredButton("skip")}
                   onMouseLeave={() => setHoveredButton(null)}
-                  className="group relative flex h-14 w-14 items-center justify-center overflow-hidden rounded-full transition-all duration-300 disabled:opacity-50 sm:h-16 sm:w-16"
+                  className="group relative flex h-14 w-14 items-center justify-center overflow-hidden rounded-full transition-all duration-300 active:scale-95 disabled:opacity-50 sm:h-16 sm:w-16"
                 >
                   <div
                     className={`absolute inset-0 rounded-full border transition-all duration-300 ${
@@ -417,7 +421,7 @@ export default function RatePage() {
                   disabled={isSubmitting}
                   onMouseEnter={() => setHoveredButton("okay")}
                   onMouseLeave={() => setHoveredButton(null)}
-                  className="group relative flex h-14 w-14 items-center justify-center overflow-hidden rounded-full transition-all duration-300 disabled:opacity-50 sm:h-16 sm:w-16"
+                  className="group relative flex h-14 w-14 items-center justify-center overflow-hidden rounded-full transition-all duration-300 active:scale-95 disabled:opacity-50 sm:h-16 sm:w-16"
                 >
                   <div
                     className={`absolute inset-0 rounded-full border transition-all duration-300 ${
@@ -447,7 +451,7 @@ export default function RatePage() {
                   disabled={isSubmitting}
                   onMouseEnter={() => setHoveredButton("like")}
                   onMouseLeave={() => setHoveredButton(null)}
-                  className="group relative flex h-16 w-16 items-center justify-center overflow-hidden rounded-full transition-all duration-300 disabled:opacity-50 sm:h-20 sm:w-20"
+                  className="group relative flex h-16 w-16 items-center justify-center overflow-hidden rounded-full transition-all duration-300 active:scale-95 disabled:opacity-50 sm:h-20 sm:w-20"
                 >
                   <div
                     className={`absolute inset-0 rounded-full border transition-all duration-300 ${
@@ -490,6 +494,15 @@ export default function RatePage() {
         </div>
       </div>
 
+      {showSavedToast && (
+        <div className="pointer-events-none fixed inset-x-0 bottom-6 z-50 flex justify-center">
+          <div className="pointer-events-auto flex items-center gap-2 rounded-full border border-white/40 bg-white/70 px-4 py-2 text-xs font-medium text-foreground shadow-lg shadow-primary/25 backdrop-blur-xl [animation:toast-pop_0.35s_ease-out]">
+            <Sparkles className="h-3.5 w-3.5 text-primary" />
+            <span>Saved to your aura</span>
+          </div>
+        </div>
+      )}
+
       {/* Custom animation keyframes */}
       <style jsx>{`
         @keyframes pulse-border {
@@ -501,6 +514,17 @@ export default function RatePage() {
           50% {
             opacity: 0.6;
             transform: scale(1.02);
+          }
+        }
+
+        @keyframes toast-pop {
+          0% {
+            opacity: 0;
+            transform: translateY(8px) scale(0.98);
+          }
+          100% {
+            opacity: 1;
+            transform: translateY(0) scale(1);
           }
         }
       `}</style>

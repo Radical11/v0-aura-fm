@@ -6,7 +6,6 @@ import {
   Moon,
   Music,
   ChevronRight,
-  Share2,
   Zap,
   Heart,
   Guitar,
@@ -79,9 +78,12 @@ export default function ResultsPage() {
   const [result, setResult] = useState<AuraResult | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [hasMounted, setHasMounted] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
+    setHasMounted(true);
+
     const calculateAura = async () => {
       const supabase = createClient();
       const {
@@ -240,6 +242,14 @@ export default function ResultsPage() {
         <div className="absolute bottom-6 left-1/4 h-[320px] w-[320px] rounded-full bg-brand-pink/20 blur-[130px]" />
       </div>
 
+      {/* Noise texture */}
+      <div
+        className="pointer-events-none absolute inset-0 opacity-[0.03]"
+        style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
+        }}
+      />
+
       {/* Content */}
       <div className="relative z-10 flex min-h-screen flex-col items-center justify-center px-4 py-16">
         {/* Logo */}
@@ -254,7 +264,11 @@ export default function ResultsPage() {
         </div>
 
         {/* Main Glass Card */}
-        <div className="relative w-full max-w-md">
+        <div
+          className={`relative w-full max-w-md transition-transform duration-700 ease-out ${
+            hasMounted ? "translate-y-0 opacity-100" : "translate-y-6 opacity-0"
+          }`}
+        >
           {/* Animated glow ring */}
           <div
             className={`absolute -inset-6 rounded-[2.8rem] bg-gradient-to-r ${auraConfig.gradient} opacity-30 blur-3xl`}
@@ -268,7 +282,12 @@ export default function ResultsPage() {
 
             <div className="relative flex flex-col items-center text-center">
               {/* Aura Icon */}
-              <div className="relative mb-6">
+              <div
+                className="relative mb-6"
+                style={{
+                  animation: hasMounted ? "aura-pop 700ms ease-out" : "none",
+                }}
+              >
                 <div className={`absolute -inset-7 rounded-full bg-gradient-to-br ${auraConfig.gradient} opacity-45 blur-3xl`} />
                 <div className="relative flex h-24 w-24 items-center justify-center rounded-full border border-white/50 bg-white/40 backdrop-blur-xl sm:h-28 sm:w-28">
                   {auraConfig.icon}
@@ -293,9 +312,26 @@ export default function ResultsPage() {
               </div>
 
               {/* Description */}
-              <p className="mb-8 max-w-xs text-sm leading-relaxed text-muted-foreground sm:text-base">
+              <p className="mb-4 max-w-xs text-sm leading-relaxed text-muted-foreground sm:text-base">
                 {auraConfig.description}
               </p>
+
+              {/* Aura tags */}
+              <div className="mb-6 flex flex-wrap justify-center gap-2">
+                {result.vibeBreakdown.slice(0, 3).map((item) => {
+                  const vibeConfig = AURA_CONFIG[item.vibe] || AURA_CONFIG.balanced;
+
+                  return (
+                    <div
+                      key={item.vibe}
+                      className="inline-flex items-center gap-1.5 rounded-full border border-white/50 bg-white/40 px-3 py-1 text-xs font-medium text-foreground backdrop-blur-xl"
+                    >
+                      <span>{vibeConfig.emoji}</span>
+                      <span>{item.vibe.charAt(0).toUpperCase() + item.vibe.slice(1)}</span>
+                    </div>
+                  );
+                })}
+              </div>
 
               {/* Vibe Breakdown */}
               <div className="mb-8 w-full">
@@ -303,12 +339,20 @@ export default function ResultsPage() {
                   Vibe Breakdown
                 </h2>
                 <div className="space-y-3">
-                  {result.vibeBreakdown.map((item) => {
+                  {result.vibeBreakdown.map((item, index) => {
                     const percentage = result.totalLiked > 0 ? (item.count / result.totalLiked) * 100 : 0;
                     const vibeConfig = AURA_CONFIG[item.vibe] || AURA_CONFIG.balanced;
 
                     return (
-                      <div key={item.vibe}>
+                      <div
+                        key={item.vibe}
+                        className="transition-transform duration-500 ease-out"
+                        style={{
+                          transform: hasMounted ? "translateY(0)" : "translateY(8px)",
+                          opacity: hasMounted ? 1 : 0,
+                          transitionDelay: `${index * 80}ms`,
+                        }}
+                      >
                         <div className="mb-1 flex items-center justify-between">
                           <span className="flex items-center gap-2 text-sm font-medium text-card-foreground">
                             <span>{vibeConfig.emoji}</span>
@@ -321,7 +365,7 @@ export default function ResultsPage() {
                         <div className="h-2 overflow-hidden rounded-full bg-white/40">
                           <div
                             className={`h-full rounded-full bg-gradient-to-r ${vibeConfig.barColor} transition-all duration-1000 ease-out`}
-                            style={{ width: `${percentage}%` }}
+                            style={{ width: hasMounted ? `${percentage}%` : "0%" }}
                           />
                         </div>
                       </div>
@@ -332,11 +376,11 @@ export default function ResultsPage() {
 
               {/* Stats */}
               <div className="mb-8 flex w-full gap-4">
-                <div className="flex flex-1 flex-col items-center rounded-2xl border border-white/40 bg-white/40 px-4 py-3 backdrop-blur-xl">
+                <div className="flex flex-1 flex-col items-center rounded-2xl border border-white/40 bg-white/40 px-4 py-3 backdrop-blur-xl transition-transform duration-300 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-primary/20">
                   <span className="text-2xl font-bold text-foreground">{result.totalRated}</span>
                   <span className="text-xs text-muted-foreground">Songs Rated</span>
                 </div>
-                <div className="flex flex-1 flex-col items-center rounded-2xl border border-white/40 bg-white/40 px-4 py-3 backdrop-blur-xl">
+                <div className="flex flex-1 flex-col items-center rounded-2xl border border-white/40 bg-white/40 px-4 py-3 backdrop-blur-xl transition-transform duration-300 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-primary/20">
                   <span className="text-2xl font-bold text-foreground">{result.totalLiked}</span>
                   <span className="text-xs text-muted-foreground">Songs Liked</span>
                 </div>
@@ -363,15 +407,6 @@ export default function ResultsPage() {
                   </span>
                 </Link>
 
-                <button
-                  type="button"
-                  className="group flex w-full items-center justify-center gap-2 rounded-full border border-white/50 bg-white/40 px-8 py-3.5 backdrop-blur-xl transition-all duration-300 hover:bg-white/60"
-                >
-                  <Share2 className="h-4 w-4 text-muted-foreground transition-colors group-hover:text-foreground" />
-                  <span className="text-sm font-medium text-muted-foreground transition-colors group-hover:text-foreground">
-                    Share Your Aura
-                  </span>
-                </button>
               </div>
             </div>
           </div>
@@ -390,6 +425,21 @@ export default function ResultsPage() {
         @keyframes glow-pulse {
           0%, 100% { opacity: 0.3; transform: scale(1); }
           50% { opacity: 0.5; transform: scale(1.05); }
+        }
+
+        @keyframes aura-pop {
+          0% {
+            opacity: 0;
+            transform: translateY(12px) scale(0.92);
+          }
+          60% {
+            opacity: 1;
+            transform: translateY(-4px) scale(1.03);
+          }
+          100% {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+          }
         }
       `}</style>
     </main>
