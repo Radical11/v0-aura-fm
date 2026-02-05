@@ -227,7 +227,7 @@ export default function DashboardClient({ profile, stats }: DashboardClientProps
           </div>
 
           {/* Quick actions */}
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid gap-4 sm:grid-cols-3">
             <Link
               href="/rate"
               className="group relative overflow-hidden rounded-[1.5rem] bg-gradient-to-r from-primary via-brand-amber to-accent p-6 transition-all duration-300 hover:scale-[1.02] hover:shadow-xl hover:shadow-primary/25"
@@ -262,6 +262,25 @@ export default function DashboardClient({ profile, stats }: DashboardClientProps
                   </h3>
                   <p className="text-sm text-muted-foreground">
                     See the most loved songs today
+                  </p>
+                </div>
+              </div>
+            </Link>
+
+            <Link
+              href="/search"
+              className="group relative overflow-hidden rounded-[1.5rem] border border-border bg-card p-6 backdrop-blur-xl transition-all duration-300 hover:border-border hover:bg-foreground/5"
+            >
+              <div className="relative flex items-center gap-4">
+                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-secondary/20 to-brand-cyan/20">
+                  <Music className="h-6 w-6 text-secondary" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-foreground">
+                    Search Library
+                  </h3>
+                  <p className="text-sm text-muted-foreground">
+                    Find songs by title or artist
                   </p>
                 </div>
               </div>

@@ -52,12 +52,20 @@ export default function Home() {
         </div>
         <div className="flex items-center gap-3">
           {user ? (
-            <Link
-              href="/dashboard"
-              className="rounded-full border border-white/40 bg-white/40 px-5 py-2.5 text-sm font-semibold text-foreground backdrop-blur-xl transition-all hover:bg-white/60"
-            >
-              Dashboard
-            </Link>
+            <>
+              <Link
+                href="/search"
+                className="rounded-full border border-white/30 bg-white/40 px-4 py-2 text-xs font-medium text-muted-foreground backdrop-blur-xl transition-all hover:bg-white/60 hover:text-foreground"
+              >
+                Search
+              </Link>
+              <Link
+                href="/dashboard"
+                className="rounded-full border border-white/40 bg-white/40 px-5 py-2.5 text-sm font-semibold text-foreground backdrop-blur-xl transition-all hover:bg-white/60"
+              >
+                Dashboard
+              </Link>
+            </>
           ) : (
             <>
               <Link
