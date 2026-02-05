@@ -51,10 +51,10 @@
   --sidebar-border: oklch(0 0 0);
   --sidebar-ring: oklch(0.7853 0.1041 274.7134);
   --shadow-x: 0px;
-  --shadow-y: 1px;
-  --shadow-blur: 2px;
+  --shadow-y: 2px;
+  --shadow-blur: 6px;
   --shadow-spread: 0px;
-  --shadow-opacity: 0.05;
+  --shadow-opacity: 0.4;
   --shadow-color: #000000;
 }
 
