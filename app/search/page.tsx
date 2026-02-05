@@ -33,7 +33,9 @@ export default function SearchPage() {
 
       const { data } = await supabase
         .from("songs")
-        .select("id, title, artist, album_art_url, genre, vibe")
+        // alias cover_url -> album_art_url so this works even if the
+        // album_art_url column does not exist yet
+        .select("id, title, artist, album_art_url:cover_url, genre, vibe")
         .or(`title.ilike.%${query}%,artist.ilike.%${query}%`)
         .limit(30);
 
